@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Membresías - FITTECH{% endblock %}
+
+{% block content %}
+<style>
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+
+    .btn-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        color: white;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+
+    .btn-icon:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        opacity: 0.9;
+    }
+
+    .btn-info {
+        background-color: #10b981;
+    }
+
+    .btn-primary {
+        background-color: #3b82f6;
+    }
+
+    .btn-danger {
+        background-color: #ef4444;
+    }
+</style>
+
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h1 style="font-size: 2rem; color: var(--dark-color); font-weight: bold;">Gestión de Membresías</h1>
+        <a href="{% url 'membresias_crear' %}" class="btn btn-primary">+ Nueva Membresía</a>
+    </div>
+
+    {% if membresias %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Duración (días)</th>
+                <th>Precio</th>
+                <th>Descripción</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for membresia in membresias %}
+            <tr>
+                <td>{{ membresia.id }}</td>
+                <td><strong>{{ membresia.nombre }}</strong></td>
+                <td>{{ membresia.duracion_dias }} días</td>
+                <td>${{ membresia.precio|floatformat:0 }} COP</td>
+                <td>{{ membresia.descripcion|truncatewords:10 }}</td>
+                <td>
+                    <div class="action-buttons">
+                        <a href="{% url 'membresias_ver' membresia.id %}" class="btn-icon btn-info" title="Ver detalles">
+                            <!-- icono ver -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                ircle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </a>
+                        <a href="{% url 'membresias_editar' membresia.id %}" class="btn-icon btn-primary" title="Editar">
+                            <!-- icono editar -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                        </a>
+                        <a href="{% url 'membresias_eliminar' membresia.id %}" 
+                           class="btn-icon btn-danger" 
+                           title="Eliminar"
+                           onclick="return confirm('¿Está seguro de eliminar esta membresía?');">
+                            <!-- icono eliminar -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                <line x1="10" y1="11" x2="10" y2="17"></line>
+                                <line x1="14" y1="11" x2="14" y2="17"></line>
+                            </svg>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="text-align: center; font-size: 1.125rem; color: var(--dark-color); padding: 2rem; font-weight: 600;">No hay membresías registradas</p>
+    {% endif %}
+</div>
+{% endblock %}

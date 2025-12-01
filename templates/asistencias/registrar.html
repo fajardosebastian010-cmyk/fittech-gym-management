@@ -1,0 +1,316 @@
+{% extends 'base.html' %}
+
+{% block title %}Registrar Asistencia - FITTECH{% endblock %}
+
+{% block extra_css %}
+<style>
+.registro-asistencia-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 22px -8px #7446b733, 0 1px 10px 0 #ece7fd;
+    padding: 2.3rem 2rem;
+    max-width: 540px;
+    margin: 2rem auto;
+}
+.registro-asistencia-head {
+    text-align: center;
+    margin-bottom: 2.2rem;
+}
+.registro-asistencia-head h1 {
+    font-size: 2.2rem;
+    color: #171251;
+    margin-bottom: 0.6rem;
+    font-weight: bold;
+    letter-spacing: .015em;
+}
+.registro-asistencia-head p {
+    font-size: 1.1rem;
+    color: #353267;
+    font-weight: 600;
+    margin-bottom: 0.4em;
+}
+.input-documento {
+    font-size: 1.25rem;
+    font-weight: 600;
+    text-align: center;
+    padding: 1.2rem 1rem;
+    width: 100%;
+    border: 3px solid #6c63ff;
+    border-radius: 10px;
+    margin-bottom: 0.9em;
+    background: #fafbfc;
+    box-shadow: 0 1px 4px 0 #e7e7f9;
+    transition: border .17s, background .14s;
+}
+.input-documento:focus {
+    border-color: #764ba2;
+    background: #fff;
+    box-shadow: 0 0 0 3px #667eea40;
+}
+.btn-registro {
+    width: 100%;
+    padding: 1.1rem;
+    font-size: 1.18rem;
+    font-weight: bold;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    box-shadow: 0 1.5px 8px -3px #b1a8f1;
+    margin-top: 0.7em;
+    transition: background .18s;
+}
+.btn-registro:hover { background: #764ba2; }
+.mensaje-resultado {
+    margin-top: 1.6rem;
+    padding: 1.1rem 1.3rem;
+    border-radius: 0.6rem;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.11rem;
+    display: none;
+}
+.mensaje-resultado.success { background: #d1fae5; color: #065f46; border: 2px solid #10b981; }
+.mensaje-resultado.error { background: #fee2e2; color: #991b1b; border: 2px solid #ef4444; }
+.info-cliente {
+    margin-top: 1.5rem;
+    padding: 1.05rem 1.3rem;
+    background: #f6f8fb;
+    border-radius: 0.6rem;
+    display: none;
+    box-shadow: 0 2px 9px -7px #bdb7e0;
+}
+.info-cliente h3 {
+    font-size: 1.13rem;
+    color: #204166;
+    margin-bottom: .7rem;
+    font-weight: 700;
+}
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    padding: .6rem 0;
+    border-bottom: 1px solid #e4e3f7;
+    font-weight: 600;
+}
+.info-item:last-child { border-bottom: none; }
+.info-label { color: #453db2; font-size: 1rem; }
+.info-value { color: #1d1372; font-size: 1rem; }
+.historial-asistencias {
+    margin-top: 2.6rem;
+    max-width: 540px;
+    margin-left: auto; margin-right:auto;
+}
+.historial-asistencias-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 22px -10px #8578c033;
+    padding: 1.3rem 1rem 1.2rem 1.3rem;
+}
+.historial-asistencias h2 {
+    font-size: 1.25rem;
+    color: #25214b;
+    margin-bottom: 1.0rem;
+    font-weight: 700;
+}
+.historial-item {
+    background: #fff;
+    border-left: 4px solid #10b981;
+    margin-bottom: 0.6rem;
+    border-radius: 0.26rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    box-shadow: 0 1px 8px -7px #07c87433;
+    padding: 0.73em 0.7em 0.73em 1em;
+}
+.historial-item:last-child { margin-bottom:0; }
+.empty-asistencias {
+    color: #8a8fd9;
+    font-size: 1.04em;
+    font-weight: 600;
+    text-align:center;
+    padding: 1.2rem 1rem;
+}
+@media (max-width: 700px) {
+    .registro-asistencia-card, .historial-asistencias { padding: 0.7em;}
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="registro-asistencia-card">
+    <div class="registro-asistencia-head">
+        <h1>Registro de Asistencia</h1>
+        <p>Ingrese el número de documento del cliente</p>
+    </div>
+    <form id="form-registro-asistencia" autocomplete="off">
+        {% csrf_token %}
+        <input 
+            type="text"
+            inputmode="numeric"
+            id="documento-input"
+            name="documento"
+            class="input-documento"
+            placeholder="Número de Documento"
+            required
+            maxlength="20"
+            autofocus>
+        <button type="submit" class="btn-registro">Registrar Asistencia</button>
+    </form>
+    <div id="mensaje-resultado" class="mensaje-resultado"></div>
+    <div id="info-cliente" class="info-cliente">
+        <h3>Información del Cliente</h3>
+        <div class="info-item">
+            <span class="info-label">Nombre:</span>
+            <span class="info-value" id="cliente-nombre"></span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Documento:</span>
+            <span class="info-value" id="cliente-documento"></span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Hora de Registro:</span>
+            <span class="info-value" id="asistencia-hora"></span>
+        </div>
+    </div>
+</div>
+
+<div class="historial-asistencias">
+    <div class="historial-asistencias-card">
+        <h2>Asistencias de Hoy</h2>
+        <div id="lista-asistencias" class="historial-list">
+            {% if asistencias_hoy %}
+                {% for asistencia in asistencias_hoy %}
+                <div class="historial-item">
+                    <div>
+                        <strong>{{ asistencia.cliente.nombres }} {{ asistencia.cliente.apellidos }}</strong><br>
+                        <small>Doc: {{ asistencia.cliente.documento }}</small>
+                    </div>
+                    <div style="text-align: right;">
+                        <strong style="color: #10b981;">{{ asistencia.hora|time:"H:i:s" }}</strong>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-asistencias">No hay asistencias registradas hoy</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+
+// Función para agregar nueva asistencia al historial sin recargar
+function agregarAsistenciaAlHistorial(documento, nombre, hora) {
+    const listaDiv = document.getElementById('lista-asistencias');
+    
+    // Eliminar el mensaje de "No hay asistencias" si existe
+    const emptyMsg = listaDiv.querySelector('.empty-asistencias');
+    if (emptyMsg) {
+        emptyMsg.remove();
+    }
+    
+    // Crear el nuevo item de asistencia
+    const nuevoItem = document.createElement('div');
+    nuevoItem.className = 'historial-item';
+    nuevoItem.innerHTML = `
+        <div>
+            <strong>${nombre}</strong><br>
+            <small>Doc: ${documento}</small>
+        </div>
+        <div style="text-align: right;">
+            <strong style="color: #10b981;">${hora}</strong>
+        </div>
+    `;
+    
+    // Insertar al inicio de la lista
+    listaDiv.insertBefore(nuevoItem, listaDiv.firstChild);
+}
+
+// Manejo del formulario
+const form = document.getElementById('form-registro-asistencia');
+const mensajeDiv = document.getElementById('mensaje-resultado');
+const infoClienteDiv = document.getElementById('info-cliente');
+const documentoInput = document.getElementById('documento-input');
+
+form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    mensajeDiv.style.display = 'none';
+    infoClienteDiv.style.display = 'none';
+    
+    try {
+        const formData = new FormData(form);
+        const response = await fetch('{% url "asistencias_registrar" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': csrftoken,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            mensajeDiv.className = 'mensaje-resultado success';
+            mensajeDiv.textContent = '✓ ' + data.message;
+            mensajeDiv.style.display = 'block';
+            
+            document.getElementById('cliente-nombre').textContent = data.cliente;
+            document.getElementById('cliente-documento').textContent = formData.get('documento');
+            document.getElementById('asistencia-hora').textContent = data.hora;
+            infoClienteDiv.style.display = 'block';
+            
+            documentoInput.value = '';
+            
+            // Agregar la asistencia al historial sin recargar la página
+            agregarAsistenciaAlHistorial(formData.get('documento'), data.cliente, data.hora);
+            
+            setTimeout(() => {
+                mensajeDiv.style.display = 'none';
+                infoClienteDiv.style.display = 'none';
+                documentoInput.focus();
+            }, 5000);
+        } else {
+            mensajeDiv.className = 'mensaje-resultado error';
+            mensajeDiv.textContent = '✗ ' + data.message;
+            mensajeDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                mensajeDiv.style.display = 'none';
+                documentoInput.focus();
+            }, 5000);
+        }
+    } catch (error) {
+        mensajeDiv.className = 'mensaje-resultado error';
+        mensajeDiv.textContent = '✗ Error al registrar asistencia. Intente nuevamente.';
+        mensajeDiv.style.display = 'block';
+        
+        setTimeout(() => {
+            mensajeDiv.style.display = 'none';
+            documentoInput.focus();
+        }, 4000);
+    }
+});
+
+documentoInput.focus();
+</script>
+{% endblock %}

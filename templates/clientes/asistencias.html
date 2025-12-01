@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+
+{% block title %}Asistencias de {{ cliente.nombres }} - FITTECH{% endblock %}
+
+{% block extra_css %}
+<style>
+.asistencias-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.cliente-info-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 14px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+}
+
+.cliente-info-card h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.cliente-info-card p {
+    opacity: 0.9;
+    font-size: 1rem;
+}
+
+.filter-card {
+    background: white;
+    border-radius: 14px;
+    padding: 2rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 2rem;
+}
+
+.filter-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 1rem;
+    align-items: end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    font-weight: 700;
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.filter-group input {
+    padding: 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.filter-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.stats-card {
+    background: white;
+    border-radius: 14px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 8px;
+}
+
+.stat-item .number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    display: block;
+}
+
+.stat-item .label {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin-top: 0.5rem;
+}
+
+.table-card {
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.modern-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.modern-table thead {
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.modern-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.modern-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.modern-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+.modern-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.empty-state-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    color: #6b7280;
+}
+
+@media (max-width: 768px) {
+    .filter-form {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-card {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="asistencias-container">
+    <div class="page-header">
+        <h1>📊 Asistencias del Cliente</h1>
+        <a href="{% url 'clientes_ver' cliente.documento %}" class="btn btn-secondary">← Volver</a>
+    </div>
+
+    <div class="cliente-info-card">
+        <h2>{{ cliente.nombres }} {{ cliente.apellidos }}</h2>
+        <p>Documento: {{ cliente.documento }} | Email: {{ cliente.email }}</p>
+    </div>
+
+    <div class="filter-card">
+        <form method="GET" class="filter-form">
+            <div class="filter-group">
+                <label for="fecha_desde">Fecha Desde</label>
+                <input type="date" id="fecha_desde" name="fecha_desde" value="{{ fecha_desde }}">
+            </div>
+            <div class="filter-group">
+                <label for="fecha_hasta">Fecha Hasta</label>
+                <input type="date" id="fecha_hasta" name="fecha_hasta" value="{{ fecha_hasta }}">
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <button type="submit" class="btn btn-primary">🔍 Filtrar</button>
+                <a href="{% url 'cliente_asistencias' cliente.documento %}" class="btn btn-secondary">✕ Limpiar</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="stats-card">
+        <div class="stat-item">
+            <span class="number">{{ total_asistencias }}</span>
+            <span class="label">Total Asistencias</span>
+        </div>
+        {% if dias_rango %}
+        <div class="stat-item">
+            <span class="number">{{ dias_rango }}</span>
+            <span class="label">Días en Rango</span>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if asistencias %}
+    <div class="table-card">
+        <table class="modern-table">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Día de la Semana</th>
+                    <th>Registrado por</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for asistencia in asistencias %}
+                <tr>
+                    <td><strong>{{ asistencia.fecha|date:"d/m/Y" }}</strong></td>
+                    <td>{{ asistencia.hora|time:"H:i:s" }}</td>
+                    <td>{{ asistencia.fecha|date:"l" }}</td>
+                    <td>
+                        {% if asistencia.usuario_registro %}
+                            {{ asistencia.usuario_registro.nombre }}
+                        {% else %}
+                            <span style="color: #9ca3af;">Sistema</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="table-card">
+        <div class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <h3>No se encontraron asistencias</h3>
+            <p>No hay registros de asistencias para este cliente en el rango seleccionado</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

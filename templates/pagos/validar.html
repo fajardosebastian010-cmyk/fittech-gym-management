@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Validar Pago - FITTECH{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1 style="font-size: 2rem; color: var(--dark-color); margin-bottom: 2rem; font-weight: bold;">Validar Pago #{{ pago.id }}</h1>
+
+    <div style="background: #dbeafe; padding: 2rem; border-radius: 0.5rem; margin-bottom: 2rem;">
+        <h3 style="font-size: 1.25rem; color: var(--dark-color); margin-bottom: 1rem; font-weight: 700;">Información del Pago</h3>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div>
+                <p style="font-size: 1rem; margin-bottom: 0.5rem; font-weight: 600;"><strong>Cliente:</strong> {{ pago.cliente.nombres }} {{ pago.cliente.apellidos }}</p>
+                <p style="font-size: 1rem; margin-bottom: 0.5rem; font-weight: 600;"><strong>Concepto:</strong> {{ pago.concepto }}</p>
+                <p style="font-size: 1rem; margin-bottom: 0.5rem; font-weight: 600;"><strong>Tipo:</strong> {{ pago.get_tipo_pago_display }}</p>
+            </div>
+            <div>
+                <p style="font-size: 1rem; margin-bottom: 0.5rem; font-weight: 600;"><strong>Monto:</strong> <span style="color: var(--success-color); font-size: 1.25rem;">${{ pago.monto|floatformat:0 }} COP</span></p>
+                <p style="font-size: 1rem; margin-bottom: 0.5rem; font-weight: 600;"><strong>Método:</strong> {{ pago.get_metodo_pago_display }}</p>
+                <p style="font-size: 1rem; margin-bottom: 0.5rem; font-weight: 600;"><strong>Comprobante:</strong> {{ pago.comprobante|default:"N/A" }}</p>
+            </div>
+        </div>
+
+        {% if pago.observaciones %}
+        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 2px solid var(--primary-color);">
+            <p style="font-size: 1rem; font-weight: 600;"><strong>Observaciones:</strong></p>
+            <p style="font-size: 1rem; margin-top: 0.5rem;">{{ pago.observaciones }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        
+        <div style="background: #fef3c7; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 2rem;">
+            <h3 style="font-size: 1.125rem; color: var(--dark-color); margin-bottom: 1rem; font-weight: 700;">¿Desea validar o rechazar este pago?</h3>
+            
+            <div class="form-group" id="rechazo-section" style="display: none;">
+                <label for="observacion_rechazo">Motivo del Rechazo *</label>
+                <textarea id="observacion_rechazo" name="observacion_rechazo" rows="3" placeholder="Ingrese el motivo del rechazo"></textarea>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <button type="submit" name="accion" value="validar" class="btn btn-success" onclick="return confirm('¿Está seguro de validar este pago?')">✓ Validar Pago</button>
+                <button type="button" class="btn btn-danger" onclick="mostrarRechazo()">✗ Rechazar Pago</button>
+                <a href="{% url 'pagos_listar' %}" class="btn btn-primary">Cancelar</a>
+            </div>
+        </div>
+
+        <button type="submit" name="accion" value="rechazar" id="btn-confirmar-rechazo" class="btn btn-danger" style="display: none;" onclick="return confirm('¿Está seguro de rechazar este pago?')">Confirmar Rechazo</button>
+    </form>
+</div>
+
+<script>
+function mostrarRechazo() {
+    document.getElementById('rechazo-section').style.display = 'block';
+    document.getElementById('btn-confirmar-rechazo').style.display = 'inline-block';
+}
+</script>
+{% endblock %}

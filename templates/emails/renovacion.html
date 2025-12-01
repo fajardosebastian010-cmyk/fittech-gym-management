@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Renovación de Membresía - FITTECH</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; background-color: #f4f4f4; -webkit-font-smoothing: antialiased;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f4f4f4; padding: 20px;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 600px;">
+                    
+                    <!-- Header -->
+                    <tr>
+                        <td style="background-color: #10b981; padding: 40px 20px; text-align: center;">
+                            <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: bold; font-family: Arial, sans-serif;">✅ RENOVACIÓN EXITOSA</h1>
+                            <p style="color: #ffffff; margin: 10px 0 0 0; font-size: 16px; font-family: Arial, sans-serif;">Tu membresía ha sido renovada</p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Body -->
+                    <tr>
+                        <td style="padding: 40px 30px;">
+                            <h2 style="color: #10b981; margin: 0 0 20px 0; font-size: 28px; font-family: Arial, sans-serif; font-weight: bold;">¡Gracias por renovar tu membresía!</h2>
+                            
+                            <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0; font-family: Arial, sans-serif;">
+                                Hola <strong>{{ cliente.nombres }} {{ cliente.apellidos }}</strong>,
+                            </p>
+                            
+                            <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0; font-family: Arial, sans-serif;">
+                                Tu membresía en FITTECH ha sido renovada exitosamente. ¡Seguimos contigo en tu camino hacia una vida más saludable! 💪
+                            </p>
+                            
+                            <!-- Success Box -->
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #d1fae5; border: 2px solid #10b981; border-radius: 8px; margin: 0 0 30px 0;">
+                                <tr>
+                                    <td style="padding: 25px; text-align: center;">
+                                        <div style="font-size: 48px; margin-bottom: 10px; line-height: 1;">🎉</div>
+                                        <h3 style="color: #065f46; margin: 10px 0 10px 0; font-size: 22px; font-weight: bold; font-family: Arial, sans-serif;">¡RENOVACIÓN CONFIRMADA!</h3>
+                                        <p style="color: #065f46; margin: 0; font-size: 16px; font-family: Arial, sans-serif;">Tu membresía está activa nuevamente</p>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- Info Box -->
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f3f4f6; border-radius: 8px; margin: 0 0 30px 0;">
+                                <tr>
+                                    <td style="padding: 25px;">
+                                        <h3 style="color: #2563eb; margin: 0 0 15px 0; font-size: 20px; font-family: Arial, sans-serif; font-weight: bold;">📋 Detalles de tu Renovación</h3>
+                                        
+                                        <p style="color: #333333; font-size: 15px; margin: 8px 0; font-family: Arial, sans-serif; line-height: 1.5;">
+                                            <strong>Membresía:</strong> {{ membresia.nombre }}
+                                        </p>
+                                        
+                                        <p style="color: #333333; font-size: 15px; margin: 8px 0; font-family: Arial, sans-serif; line-height: 1.5;">
+                                            <strong>Nueva Fecha de Inicio:</strong> {{ fecha_inicio|date:"d/m/Y" }}
+                                        </p>
+                                        
+                                        <p style="color: #333333; font-size: 15px; margin: 8px 0; font-family: Arial, sans-serif; line-height: 1.5;">
+                                            <strong>Nueva Fecha de Vencimiento:</strong> {{ fecha_fin|date:"d/m/Y" }}
+                                        </p>
+                                        
+                                        <p style="color: #333333; font-size: 15px; margin: 8px 0; font-family: Arial, sans-serif; line-height: 1.5;">
+                                            <strong>Duración:</strong> {{ membresia.duracion_dias }} días
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- Tips Box -->
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 4px; margin: 0 0 30px 0;">
+                                <tr>
+                                    <td style="padding: 20px;">
+                                        <h3 style="color: #92400e; margin: 0 0 15px 0; font-size: 18px; font-family: Arial, sans-serif; font-weight: bold;">💡 Consejos para aprovechar tu membresía</h3>
+                                        <ul style="color: #333333; font-size: 15px; line-height: 1.8; margin: 0; padding-left: 20px; font-family: Arial, sans-serif;">
+                                            <li>Establece una rutina de entrenamiento regular</li>
+                                            <li>Combina ejercicios de cardio y fuerza</li>
+                                            <li>Mantén una alimentación balanceada</li>
+                                            <li>No olvides hidratarte durante el ejercicio</li>
+                                            <li>Descansa lo suficiente entre entrenamientos</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0; font-family: Arial, sans-serif;">
+                                Ya puedes continuar asistiendo al gimnasio con normalidad. Recuerda registrar tu asistencia en la recepción cada vez que nos visites.
+                            </p>
+                            
+                            <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0; font-family: Arial, sans-serif;">
+                                ¡Gracias por confiar en FITTECH! 🏋️‍♂️
+                            </p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #1f2937; padding: 30px 20px; text-align: center;">
+                            <p style="color: #ffffff; margin: 0 0 10px 0; font-size: 16px; font-weight: bold; font-family: Arial, sans-serif;">FITTECH</p>
+                            <p style="color: #9ca3af; margin: 0; font-size: 14px; font-family: Arial, sans-serif;">Sistema de Gestión de Gimnasio</p>
+                            <p style="color: #9ca3af; margin: 10px 0 0 0; font-size: 12px; font-family: Arial, sans-serif;">
+                                © 2025 FITTECH. Todos los derechos reservados.
+                            </p>
+                        </td>
+                    </tr>
+                    
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

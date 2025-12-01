@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Ver Pago - FITTECH{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1 style="font-size: 2rem; color: var(--dark-color); margin-bottom: 2rem; font-weight: bold;">Detalles del Pago #{{ pago.id }}</h1>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+        <div>
+            <div style="background: var(--light-color); padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                <label style="font-weight: 700; color: var(--dark-color); font-size: 1rem; display: block; margin-bottom: 0.5rem;">ID del Pago:</label>
+                <p style="font-size: 1.125rem; font-weight: 600;">#{{ pago.id }}</p>
+            </div>
+
+            <div style="background: var(--light-color); padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                <label style="font-weight: 700; color: var(--dark-color); font-size: 1rem; display: block; margin-bottom: 0.5rem;">Cliente:</label>
+                <p style="font-size: 1.125rem; font-weight: 600;">{{ pago.cliente.nombres }} {{ pago.cliente.apellidos }}</p>
+                <p style="font-size: 0.875rem; color: var(--dark-color);">Documento: {{ pago.cliente.documento }}</p>
+            </div>
+
+            <div style="background: var(--light-color); padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                <label style="font-weight: 700; color: var(--dark-color); font-size: 1rem; display: block; margin-bottom: 0.5rem;">Concepto:</label>
+                <p style="font-size: 1.125rem; font-weight: 600;">{{ pago.concepto }}</p>
+            </div>
+
+            <div style="background: var(--light-color); padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                <label style="font-weight: 700; color: var(--dark-color); font-size: 1rem; display: block; margin-bottom: 0.5rem;">Tipo de Pago:</label>
+                <p style="font-size: 1.125rem; font-weight: 600;">{{ pago.get_tipo_pago_display }}</p>
+            </div>
+
+            {% if pago.membresia %}
+            <div style="background: var(--light-color); padding: 1.5rem; border-radius: 0.5rem;">
+                <label style="font-weight: 700; color: var(--dark-color); font-size: 1rem; display: block; margin-bottom: 0.5rem;">Membresía:</label>
+                <p style="font-size: 1.125rem; color: var(--primary-color); font-weight: 600;">{{ pago.membresia.nombre }}</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div>
+            <div style="background: var(--light-color); padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                <label style="font-weight: 700; color: var(--dark-color); font-size: 1rem; display: block; margin-bottom: 0.5rem;">Monto:</label>
+                <p style="font-size: 1.5rem; color: var(--success-color); font-weight: bold;">${{ pago.monto|floatformat:0 }} COP</p>
+            </div>
+
+            <div style="background: var(--light-color); padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                <label style="font-weight: 700; color: var(--dark-color); font-size: 1rem; display: block; margin-bottom: 0.5rem;">Método de Pago:</label>
+                <p style="font-size: 1.125rem; font-weight: 600;">{{ pago.get_metodo_pago_display }}</p>
+            </div>
+
+            <div style="background: var(--light-color); padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                <label style="font-weight: 700; color: var(--dark-color); font-size: 1rem; display: block; margin-bottom: 0.5rem;">Estado:</label>
+                {% if pago.estado == 'pendiente' %}
+                <span style="background: #fef3c7; color: #92400e; padding: 0.5rem 1rem; border-radius: 0.25rem; font-weight: 700; font-size: 1rem;">PENDIENTE</span>
+                {% elif pago.estado == 'validado' %}
+                <span style="background: #d1fae5; color: #065f46; padding: 0.5rem 1rem; border-radius: 0.25rem; font-weight: 700; font-size: 1rem;">VALIDADO</span>
+                {% elif pago.estado == 'rechazado' %}
+                <span style="background: #fee2e2; color: #991b1b; padding: 0.5rem 1rem; border-radius: 0.25rem; font-weight: 700; font-size: 1rem;">RECHAZADO</span>
+                {% else %}
+                <span style="background: var(--light-color); color: var(--dark-color); padding: 0.5rem 1rem; border-radius: 0.25rem; font-weight: 700; font-size: 1rem;">{{ pago.get_estado_display|upper }}</span>
+                {% endif %}
+            </div>
+
+            {% if pago.comprobante %}
+            <div style="background: var(--light-color); padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                <label style="font-weight: 700; color: var(--dark-color); font-size: 1rem; display: block; margin-bottom: 0.5rem;">Comprobante:</label>
+                <p style="font-size: 1.125rem; font-weight: 600;">{{ pago.comprobante }}</p>
+            </div>
+            {% endif %}
+
+            <div style="background: var(--light-color); padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                <label style="font-weight: 700; color: var(--dark-color); font-size: 1rem; display: block; margin-bottom: 0.5rem;">Fecha de Pago:</label>
+                <p style="font-size: 1rem; font-weight: 600;">{{ pago.fecha_pago|date:"d/m/Y H:i:s" }}</p>
+            </div>
+
+            <div style="background: var(--light-color); padding: 1.5rem; border-radius: 0.5rem;">
+                <label style="font-weight: 700; color: var(--dark-color); font-size: 1rem; display: block; margin-bottom: 0.5rem;">Registrado por:</label>
+                <p style="font-size: 1rem; font-weight: 600;">{{ pago.usuario_registro.nombre }}</p>
+            </div>
+        </div>
+    </div>
+
+    {% if pago.fecha_validacion %}
+    <div style="background: #dbeafe; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 2rem;">
+        <h3 style="font-size: 1.25rem; color: var(--dark-color); margin-bottom: 1rem; font-weight: 700;">Información de Validación</h3>
+        <p style="font-size: 1rem; margin-bottom: 0.5rem; font-weight: 600;"><strong>Fecha de Validación:</strong> {{ pago.fecha_validacion|date:"d/m/Y H:i:s" }}</p>
+        <p style="font-size: 1rem; margin-bottom: 0.5rem; font-weight: 600;"><strong>Validado por:</strong> {{ pago.usuario_validacion.nombre }}</p>
+    </div>
+    {% endif %}
+
+    {% if pago.observaciones %}
+    <div style="background: var(--light-color); padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 2rem;">
+        <h3 style="font-size: 1.25rem; color: var(--dark-color); margin-bottom: 1rem; font-weight: 700;">Observaciones</h3>
+        <p style="font-size: 1rem; font-weight: 500;">{{ pago.observaciones }}</p>
+    </div>
+    {% endif %}
+
+    <div style="display: flex; gap: 1rem;">
+        {% if pago.estado == 'pendiente' %}
+        <a href="{% url 'pagos_editar' pago.id %}" class="btn btn-success">Editar</a>
+        {% if user.rol == 'administrador' %}
+        <a href="{% url 'pagos_validar' pago.id %}" class="btn btn-warning" style="background: var(--warning-color);">Validar Pago</a>
+        {% endif %}
+        {% endif %}
+        <a href="{% url 'pagos_listar' %}" class="btn btn-primary">Volver al Listado</a>
+    </div>
+</div>
+{% endblock %}

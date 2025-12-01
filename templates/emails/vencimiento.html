@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tu membresía está por vencer - FITTECH</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; background-color: #f4f4f4; -webkit-font-smoothing: antialiased;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f4f4f4; padding: 20px;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 600px;">
+                    
+                    <!-- Header con gradiente simulado -->
+                    <tr>
+                        <td style="background-color: #f59e0b; padding: 40px 20px; text-align: center;">
+                            <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: bold; font-family: Arial, sans-serif;">⚠️ RECORDATORIO</h1>
+                            <p style="color: #ffffff; margin: 10px 0 0 0; font-size: 16px; font-family: Arial, sans-serif;">Tu membresía está por vencer</p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Body -->
+                    <tr>
+                        <td style="padding: 40px 30px;">
+                            <h2 style="color: #f59e0b; margin: 0 0 20px 0; font-size: 28px; font-family: Arial, sans-serif; font-weight: bold;">¡No dejes que tu membresía expire!</h2>
+                            
+                            <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0; font-family: Arial, sans-serif;">
+                                Hola <strong>{{ cliente.nombres }} {{ cliente.apellidos }}</strong>,
+                            </p>
+                            
+                            <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0; font-family: Arial, sans-serif;">
+                                Te recordamos que tu membresía en FITTECH está próxima a vencer. ⏰
+                            </p>
+                            
+                            <!-- Warning Box -->
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fef3c7; border: 2px solid #f59e0b; border-radius: 8px; margin: 0 0 30px 0;">
+                                <tr>
+                                    <td style="padding: 25px; text-align: center;">
+                                        <div style="font-size: 48px; margin-bottom: 10px; line-height: 1;">⏰</div>
+                                        <h3 style="color: #92400e; margin: 10px 0 10px 0; font-size: 28px; font-weight: bold; font-family: Arial, sans-serif;">{{ dias_restantes }} DÍA{% if dias_restantes != 1 %}S{% endif %}</h3>
+                                        <p style="color: #92400e; margin: 0; font-size: 16px; font-weight: bold; font-family: Arial, sans-serif;">RESTANTE{% if dias_restantes != 1 %}S{% endif %} PARA EL VENCIMIENTO</p>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- Info Box -->
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f3f4f6; border-radius: 8px; margin: 0 0 30px 0;">
+                                <tr>
+                                    <td style="padding: 25px;">
+                                        <h3 style="color: #2563eb; margin: 0 0 15px 0; font-size: 20px; font-family: Arial, sans-serif; font-weight: bold;">📋 Detalles de tu Membresía</h3>
+                                        
+                                        <p style="color: #333333; font-size: 15px; margin: 8px 0; font-family: Arial, sans-serif; line-height: 1.5;">
+                                            <strong>Membresía Actual:</strong> {{ membresia.nombre }}
+                                        </p>
+                                        
+                                        <p style="color: #333333; font-size: 15px; margin: 8px 0; font-family: Arial, sans-serif; line-height: 1.5;">
+                                            <strong>Fecha de Vencimiento:</strong> <span style="color: #ef4444; font-weight: bold;">{{ fecha_vencimiento|date:"d/m/Y" }}</span>
+                                        </p>
+                                        
+                                        <p style="color: #333333; font-size: 15px; margin: 8px 0; font-family: Arial, sans-serif; line-height: 1.5;">
+                                            <strong>Días Restantes:</strong> <span style="color: #f59e0b; font-weight: bold;">{{ dias_restantes }}</span>
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- CTA Box -->
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #dbeafe; border: 2px solid #2563eb; border-radius: 8px; margin: 0 0 30px 0;">
+                                <tr>
+                                    <td style="padding: 25px; text-align: center;">
+                                        <h3 style="color: #1e40af; margin: 0 0 15px 0; font-size: 22px; font-weight: bold; font-family: Arial, sans-serif;">¡Renueva Hoy y No Pierdas Tu Progreso!</h3>
+                                        <p style="color: #1e3a8a; margin: 0 0 15px 0; font-size: 16px; line-height: 1.6; font-family: Arial, sans-serif;">
+                                            Visítanos para renovar tu membresía y continuar disfrutando de todos nuestros servicios sin interrupciones.
+                                        </p>
+                                        <div style="font-size: 48px; margin-top: 10px; line-height: 1;">💪</div>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- Important Warning -->
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fee2e2; border-left: 4px solid #ef4444; border-radius: 4px; margin: 0 0 30px 0;">
+                                <tr>
+                                    <td style="padding: 20px;">
+                                        <h3 style="color: #991b1b; margin: 0 0 15px 0; font-size: 18px; font-family: Arial, sans-serif; font-weight: bold;">⚠️ Importante</h3>
+                                        <p style="color: #333333; font-size: 15px; line-height: 1.6; margin: 0; font-family: Arial, sans-serif;">
+                                            Una vez que tu membresía venza, no podrás acceder a las instalaciones hasta que realices la renovación. ¡No esperes hasta el último momento!
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0; font-family: Arial, sans-serif;">
+                                Si ya realizaste la renovación, por favor ignora este mensaje.
+                            </p>
+                            
+                            <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0; font-family: Arial, sans-serif;">
+                                ¡Te esperamos en FITTECH! 🏋️
+                            </p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #1f2937; padding: 30px 20px; text-align: center;">
+                            <p style="color: #ffffff; margin: 0 0 10px 0; font-size: 16px; font-weight: bold; font-family: Arial, sans-serif;">FITTECH</p>
+                            <p style="color: #9ca3af; margin: 0; font-size: 14px; font-family: Arial, sans-serif;">Sistema de Gestión de Gimnasio</p>
+                            <p style="color: #9ca3af; margin: 10px 0 0 0; font-size: 12px; font-family: Arial, sans-serif;">
+                                © 2025 FITTECH. Todos los derechos reservados.
+                            </p>
+                        </td>
+                    </tr>
+                    
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

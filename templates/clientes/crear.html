@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+
+{% block title %}Registrar Cliente - FITTECH{% endblock %}
+
+{% block extra_css %}
+<style>
+.crear-cliente-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+.form-card {
+    background: white;
+    border-radius: 14px;
+    padding: 2.5rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+.form-section-title {
+    font-size: 1.4rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    padding-left: 0.5rem;
+    border-left: 4px solid var(--primary-color);
+}
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.form-group {
+    margin-bottom: 1.5rem;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+    color: var(--dark-color);
+    font-size: 0.95rem;
+}
+.form-group .input,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s;
+    background: white;
+}
+.form-group .input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+.form-group small {
+    display: block;
+    margin-top: 0.5rem;
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+.form-divider {
+    margin: 2rem 0;
+    border: none;
+    border-top: 2px solid #f3f4f6;
+}
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #f3f4f6;
+}
+.input-icon {
+    position: relative;
+}
+.form-group input::placeholder {
+    color: #9ca3af;
+}
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    .form-actions {
+        flex-direction: column;
+    }
+    .form-actions .btn {
+        width: 100%;
+    }
+    .form-card {
+        padding: 1.5rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="crear-cliente-container">
+    <div class="page-header">
+        <h1>📝 Registrar Nuevo Cliente</h1>
+        <a href="{% url 'clientes_listar' %}" class="btn btn-secondary">← Volver</a>
+    </div>
+
+    <div class="form-card">
+        <form method="POST">
+            {% csrf_token %}
+            <h2 class="form-section-title">Información Personal</h2>
+            
+            <!-- TIPO DE DOCUMENTO Y NÚMERO -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="tipo_documento">Tipo de Documento *</label>
+                    <select name="tipo_documento" id="tipo_documento" class="input" required>
+                        <option value="CC">Cédula de Ciudadanía</option>
+                        <option value="CE">Cédula de Extranjería</option>
+                        <option value="TI">Tarjeta de Identidad</option>
+                    </select>
+                    <small>Seleccione TI si el cliente es menor de 18 años</small>
+                </div>
+                <div class="form-group">
+                    <label for="documento">Número de Documento *</label>
+                    <input type="text" name="documento" id="documento" class="input" required 
+                        placeholder="Ej: 1003456789" pattern="[0-9]+" title="Solo números">
+                </div>
+            </div>
+            
+            <!-- NOMBRES Y APELLIDOS -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="nombres">Nombres *</label>
+                    <input type="text" name="nombres" id="nombres" class="input" required placeholder="Ej: Juan Carlos">
+                </div>
+                <div class="form-group">
+                    <label for="apellidos">Apellidos *</label>
+                    <input type="text" name="apellidos" id="apellidos" class="input" required placeholder="Ej: García Pérez">
+                </div>
+            </div>
+            
+            <!-- FECHA NACIMIENTO Y PESO -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fecha_nacimiento">Fecha de Nacimiento</label>
+                    <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" class="input">
+                    <small>Opcional - El cliente debe tener al menos 14 años</small>
+                </div>
+                <div class="form-group">
+                    <label for="peso">Peso (kg)</label>
+                    <input type="number" name="peso" id="peso" class="input" step="0.1" min="1" max="300" placeholder="Ej: 75.5">
+                    <small>Opcional</small>
+                </div>
+            </div>
+            
+            <!-- EMAIL Y CELULAR -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" id="email" class="input" placeholder="ejemplo@correo.com">
+                    <small>Opcional</small>
+                </div>
+                <div class="form-group">
+                    <label for="celular">Celular</label>
+                    <input type="text" name="celular" id="celular" class="input"
+                        placeholder="Ej: 3001234567" pattern="[0-9]{10}" title="Ingrese 10 dígitos">
+                    <small>Opcional</small>
+                </div>
+            </div>
+
+            <hr class="form-divider">
+
+            <h2 class="form-section-title">Membresía</h2>
+            <div class="form-group">
+                <label for="membresia">Membresía *</label>
+                <select name="membresia" id="membresia" class="input" required>
+                    <option value="">Seleccione una membresía</option>
+                    {% for membresia in membresias %}
+                    <option value="{{ membresia.id }}">
+                        {{ membresia.nombre }} - {{ membresia.duracion_dias }} días - ${{ membresia.precio|floatformat:0 }} COP
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="bono_dias">Regalo de Bienvenida (Opcional, Máximo 3 días)</label>
+                <select name="bono_dias" id="bono_dias" class="input">
+                    <option value="0">Sin regalo</option>
+                    <option value="1">+ 1 Día Extra</option>
+                    <option value="2">+ 2 Días Extra</option>
+                    <option value="3">+ 3 Días Extra</option>
+                </select>
+            </div>
+
+            <!-- Bloque de pago inicial SIEMPRE visible -->
+            <hr class="form-divider">
+            <div id="bloque-pago">
+                <h2 class="form-section-title">Pago Inicial</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="metodo_pago">Método de Pago</label>
+                        <select name="metodo_pago" id="metodo_pago" class="input">
+                            <option value="">- Selecciona -</option>
+                            <option value="efectivo">Efectivo</option>
+                            <option value="transferencia">Transferencia</option>
+                            <option value="nequi">Nequi</option>
+                            <option value="daviplata">Daviplata</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="monto">Monto</label>
+                        <input type="number" name="monto" id="monto" step="1" min="0" class="input" placeholder="Ej: 65000">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="comprobante">Comprobante/Referencia</label>
+                        <input type="text" name="comprobante" id="comprobante" class="input">
+                    </div>
+                    <div class="form-group">
+                        <label for="observaciones">Observaciones</label>
+                        <input type="text" name="observaciones" id="observaciones" class="input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">✅ Registrar Cliente</button>
+                <a href="{% url 'clientes_listar' %}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+

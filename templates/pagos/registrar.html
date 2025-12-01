@@ -1,0 +1,428 @@
+{% extends 'base.html' %}
+
+{% block title %}Registrar Pago - FITTECH{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Registrar Pago de Membresía</h1>
+    <a href="{% url 'clientes_listar' %}" class="btn btn-secondary">Volver</a>
+</div>
+
+<div class="card">
+    <div class="cliente-info">
+        <h3>Cliente: {{ cliente.nombres }} {{ cliente.apellidos }}</h3>
+        <p><strong>Documento:</strong> {{ cliente.documento }}</p>
+        <p><strong>Estado actual:</strong> 
+            {% if cliente.estado == 'activo' %}
+                <span class="badge badge-success">Activo</span>
+            {% else %}
+                <span class="badge badge-danger">Inactivo</span>
+            {% endif %}
+        </p>
+        {% if cliente.fecha_fin_membresia %}
+        <p><strong>Membresía vence:</strong> {{ cliente.fecha_fin_membresia|date:"d/m/Y" }}</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card">
+    <h3 style="margin-bottom: 1.5rem; color: #6366f1;">Seleccionar Membresía</h3>
+    <form method="POST" action="{% url 'pagos_registrar' cliente.documento %}" id="form-pago">
+        {% csrf_token %}
+        
+        <div class="membresias-grid">
+            {% for membresia in membresias %}
+            <div class="membresia-card">
+                <input 
+                    type="radio" 
+                    name="membresia_id" 
+                    value="{{ membresia.id }}" 
+                    id="membresia-{{ membresia.id }}"
+                    data-precio="{{ membresia.precio }}"
+                    data-nombre="{{ membresia.nombre }}"
+                    data-duracion="{{ membresia.duracion_dias }}"
+                    class="radio-membresia"
+                    required>
+                <label for="membresia-{{ membresia.id }}">
+                    <div class="membresia-nombre">{{ membresia.nombre }}</div>
+                    <div class="membresia-duracion">{{ membresia.duracion_dias }} días</div>
+                    <div class="membresia-precio">${{ membresia.precio|floatformat:0 }}</div>
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- DETALLES DEL PAGO -->
+        <div class="detalles-pago">
+            <h4>DETALLES DEL PAGO</h4>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="concepto">Concepto <span class="required">*</span></label>
+                    <input 
+                        type="text" 
+                        name="concepto" 
+                        id="concepto" 
+                        class="input" 
+                        value="Pago de membresía"
+                        required>
+                    <small>Descripción breve del pago</small>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group half">
+                    <label for="monto">Monto (COP) <span class="required">*</span></label>
+                    <input 
+                        type="number" 
+                        name="monto" 
+                        id="monto" 
+                        class="input" 
+                        step="1"
+                        min="0"
+                        placeholder="Seleccione una membresía"
+                        required>
+                    <small>Valor en pesos colombianos</small>
+                </div>
+                
+                <div class="form-group half">
+                    <label for="metodo_pago">Método de Pago <span class="required">*</span></label>
+                    <select name="metodo_pago" id="metodo_pago" class="input" required>
+                        <option value="">Seleccione método</option>
+                        <option value="efectivo">Efectivo</option>
+                        <option value="tarjeta">Tarjeta</option>
+                        <option value="transferencia">Transferencia Bancaria</option>
+                        <option value="nequi">Nequi</option>
+                        <option value="daviplata">Daviplata</option>
+                    </select>
+                    <small>Forma de pago utilizada</small>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="referencia">Número de Comprobante/Referencia (Opcional)</label>
+                    <input 
+                        type="text" 
+                        name="referencia" 
+                        id="referencia" 
+                        class="input" 
+                        placeholder="Ej: 123456789">
+                    <small>Número de transacción o referencia</small>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="observaciones">Observaciones (Opcional)</label>
+                    <textarea 
+                        name="observaciones" 
+                        id="observaciones" 
+                        class="input" 
+                        rows="4" 
+                        placeholder="Observaciones adicionales..."></textarea>
+                    <small>Información adicional sobre el pago</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <a href="{% url 'clientes_listar' %}" class="btn btn-cancelar">Cancelar</a>
+            <button type="submit" class="btn btn-registrar">REGISTRAR PAGO</button>
+        </div>
+    </form>
+</div>
+
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    
+    .card {
+        background: white;
+        border-radius: 10px;
+        padding: 2rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .cliente-info {
+        background: #f3f4f6;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+    
+    .cliente-info h3 {
+        color: #6366f1;
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+    }
+    
+    .cliente-info p {
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #374151;
+    }
+    
+    .membresias-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .membresia-card {
+        position: relative;
+    }
+    
+    .membresia-card input[type="radio"] {
+        display: none;
+    }
+    
+    .membresia-card label {
+        display: block;
+        padding: 1.5rem;
+        border: 3px solid #e5e7eb;
+        border-radius: 12px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        background: white;
+    }
+    
+    .membresia-card input[type="radio"]:checked + label {
+        border-color: #6366f1;
+        background: #eef2ff;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+    
+    .membresia-card label:hover {
+        border-color: #6366f1;
+        transform: translateY(-2px);
+    }
+    
+    .membresia-nombre {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+    }
+    
+    .membresia-duracion {
+        font-size: 0.9rem;
+        color: #6b7280;
+        margin-bottom: 0.5rem;
+    }
+    
+    .membresia-precio {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #6366f1;
+    }
+    
+    /* DETALLES DEL PAGO */
+    .detalles-pago {
+        border-top: 2px solid #e5e7eb;
+        padding-top: 2rem;
+        margin-top: 2rem;
+    }
+    
+    .detalles-pago h4 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 1.5rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .form-row {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group {
+        flex: 1;
+    }
+    
+    .form-group.half {
+        flex: 0 0 calc(50% - 0.75rem);
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #374151;
+        font-size: 0.95rem;
+    }
+    
+    .required {
+        color: #ef4444;
+    }
+    
+    .input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s;
+    }
+    
+    .input:focus {
+        outline: none;
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+    
+    .form-group small {
+        display: block;
+        margin-top: 0.3rem;
+        font-size: 0.85rem;
+        color: #6b7280;
+    }
+    
+    textarea.input {
+        resize: vertical;
+        min-height: 100px;
+    }
+    
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 2px solid #e5e7eb;
+    }
+    
+    .btn {
+        padding: 0.875rem 2rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 700;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .btn-cancelar {
+        background: #6b7280;
+        color: white;
+    }
+    
+    .btn-cancelar:hover {
+        background: #4b5563;
+    }
+    
+    .btn-registrar {
+        background: #10b981;
+        color: white;
+    }
+    
+    .btn-registrar:hover {
+        background: #059669;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+    
+    .btn-secondary {
+        background: #6b7280;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+    }
+    
+    .btn-secondary:hover {
+        background: #4b5563;
+    }
+    
+    .badge {
+        display: inline-block;
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+    
+    .badge-success {
+        background: #d1fae5;
+        color: #065f46;
+    }
+    
+    .badge-danger {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+    
+    @media (max-width: 768px) {
+        .form-row {
+            flex-direction: column;
+        }
+        
+        .form-group.half {
+            flex: 1;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<script>
+// MÉTODO 1: Con evento onclick directo
+function seleccionarMembresia(precio, nombre) {
+    document.getElementById('monto').value = precio;
+    document.getElementById('concepto').value = 'Pago de membresía ' + nombre;
+}
+
+// MÉTODO 2: Con addEventListener
+document.addEventListener('DOMContentLoaded', function() {
+    var radios = document.querySelectorAll('.radio-membresia');
+    
+    radios.forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            var precio = this.getAttribute('data-precio');
+            var nombre = this.getAttribute('data-nombre');
+            
+            document.getElementById('monto').value = precio;
+            document.getElementById('concepto').value = 'Pago de membresía ' + nombre;
+        });
+        
+        radio.addEventListener('click', function() {
+            var precio = this.getAttribute('data-precio');
+            var nombre = this.getAttribute('data-nombre');
+            
+            document.getElementById('monto').value = precio;
+            document.getElementById('concepto').value = 'Pago de membresía ' + nombre;
+        });
+    });
+});
+
+// MÉTODO 3: Con window.onload
+window.onload = function() {
+    var radios = document.getElementsByName('membresia_id');
+    
+    for (var i = 0; i < radios.length; i++) {
+        radios[i].onclick = function() {
+            var precio = this.getAttribute('data-precio');
+            var nombre = this.getAttribute('data-nombre');
+            
+            document.getElementById('monto').value = precio;
+            document.getElementById('concepto').value = 'Pago de membresía ' + nombre;
+        };
+    }
+};
+</script>
+{% endblock %}

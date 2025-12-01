@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>¡Te extrañamos en FITTECH!</title>
+</head>
+<body style="background: #181925; color: #f3f4f6; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background: #181925; padding: 0; margin: 0;">
+        <tr>
+            <td align="center">
+                <table width="100%" style="max-width: 450px; background: #232338; border-radius: 12px; margin: 32px 0;">
+                    <tr>
+                        <td style="padding: 32px 16px 16px 16px; text-align: center;">
+                            <div style="padding-bottom: 10px;">
+                                <div style="font-size: 2.1rem; font-weight: bold; color: #fff; letter-spacing: 2px;">FITTECH</div>
+                                <div style="color: #a5b4fc; letter-spacing: 1px; font-size: 1.1rem;">Sistema de Gestión de Gimnasio</div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0 24px;">
+                            <h2 style="color: #60a5fa; font-size: 1.5rem; margin: 1.5em 0 0.7em 0;">¡Te extrañamos en FITTECH!</h2>
+                            <p style="color: #f3f4f6; font-size: 1.12rem; margin: 0 0 16px 0;">
+                                Hola {{ cliente.nombres }},
+                            </p>
+                            <p style="color: #f3f4f6; margin-bottom: 0.7em;">
+                                Hace tiempo que no vienes al gimnasio y nos gustaría verte de nuevo entrenando con nosotros.
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0 24px;">
+                            <div style="background: #21244e; border-radius: 10px; margin: 18px 0; padding: 18px 18px;">
+                                <div style="font-size: 1.08rem; color: #93c5fd; font-weight: bold; margin-bottom: 0.6rem;">
+                                    Última Membresía
+                                </div>
+                                <div style="font-size: 1rem; margin-bottom: 4px;">
+                                    <b>Membresía:</b> 
+                                    {% if cliente.membresia_actual %}
+                                        {{ cliente.membresia_actual.nombre }}
+                                    {% else %}
+                                        No disponible
+                                    {% endif %}
+                                </div>
+                                <div style="font-size: 1rem;">
+                                    <b>Fecha de Vencimiento:</b> 
+                                    {% if cliente.fecha_fin_membresia %}
+                                        {{ cliente.fecha_fin_membresia|date:"d/m/Y" }}
+                                    {% else %}
+                                        No disponible
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0 24px;">
+                            <div style="background: #293855; border-radius: 10px; margin-bottom: 18px; padding: 20px 18px;">
+                                <div style="font-size: 1.09rem; color: #8ef3c7; font-weight:bold; margin-bottom: 0.6rem;">¿Qué incluye tu regreso?</div>
+                                <ul style="color: #e5e7eb; margin:0; padding-left:1rem;font-size:1rem;">
+                                    <li>Acceso total a todas las áreas del gimnasio</li>
+                                    <li>Asesoría y rutinas personalizadas</li>
+                                    <li>Promociones exclusivas para reactivación</li>
+                                    <li>Ambiente amigable y motivador</li>
+                                </ul>
+                            </div>
+                            <h3 style="color: #fbbf24; margin: 0 0 0.3em 0;">¿Listo para volver?</h3>
+                            <p style="color: #f3f4f6; margin-bottom: 18px;">
+                                <b>Esta es tu oportunidad para retomar tus hábitos fitness y cuidar tu salud. Reactiva tu membresía ahora y recibe bienvenida personalizada.</b>
+                            </p>
+                            <div style="text-align: center; margin-bottom: 24px;">
+                                <a href="https://wa.me/573103066077?text=Hola,%20quiero%20reactivar%20mi%20membres%C3%ADa%20en%20FITTECH" style="background: #6366f1; color: #fff; text-decoration: none; padding: 13px 36px; border-radius: 8px; font-weight: 700; font-size: 1.1rem; letter-spacing:1px;">¡Quiero volver!</a>
+
+                            </div>
+                            <div style="font-size: 0.97rem; color: #a5b4fc; margin-top: 32px; text-align:center;">
+                                Si tienes dudas o quieres conocer nuestras nuevas promociones,<br>
+                                contáctanos por WhatsApp.
+                            </div>
+                            <div style="margin:30px 0 0 0; text-align:center; color: #818CF8; font-size:0.89rem;">
+                                —
+                                <br>
+                                Este es un mensaje automático. Por favor no responder a este correo.
+                                <br>
+                                <span style="color: #475569; font-size: 12px;">
+                                    FITTECH - Sistema de Gestión de Gimnasio
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Importar Clientes - FITTECH{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1 style="font-size: 2rem; color: var(--dark-color); margin-bottom: 2rem; font-weight: bold;">Importar Clientes desde Excel</h1>
+
+    <div style="background: #dbeafe; border-left: 4px solid var(--primary-color); padding: 1.5rem; margin-bottom: 2rem; border-radius: 0.375rem;">
+        <h3 style="font-size: 1.125rem; color: var(--dark-color); margin-bottom: 1rem; font-weight: 700;">Formato del archivo Excel:</h3>
+        <p style="font-size: 1rem; margin-bottom: 0.5rem; font-weight: 600;">El archivo debe contener las siguientes columnas:</p>
+        <ul style="list-style: disc; margin-left: 2rem; font-size: 1rem; font-weight: 500;">
+            <li><strong>documento:</strong> Número de documento del cliente</li>
+            <li><strong>nombres:</strong> Nombres del cliente</li>
+            <li><strong>apellidos:</strong> Apellidos del cliente</li>
+            <li><strong>peso:</strong> Peso en kilogramos</li>
+            <li><strong>fecha_nacimiento:</strong> Formato: YYYY-MM-DD</li>
+            <li><strong>email:</strong> Correo electrónico</li>
+            <li><strong>celular:</strong> Número de celular</li>
+            <li><strong>membresia_id:</strong> ID de la membresía</li>
+        </ul>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="archivo">Seleccionar Archivo Excel</label>
+            <input type="file" id="archivo" name="archivo" accept=".xlsx,.xls" required style="padding: 1rem; background: var(--white);">
+        </div>
+
+        <div style="display: flex; gap: 1rem;">
+            <button type="submit" class="btn btn-success">📁 Importar Clientes</button>
+            <a href="{% url 'clientes_listar' %}" class="btn btn-danger">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

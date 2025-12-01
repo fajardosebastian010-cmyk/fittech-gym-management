@@ -1,0 +1,419 @@
+{% extends 'base.html' %}
+
+{% block title %}Ver Cliente - FITTECH{% endblock %}
+
+{% block extra_css %}
+<style>
+.ver-cliente-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.info-card {
+    background: white;
+    border-radius: 14px;
+    padding: 2rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 2rem;
+}
+
+.info-card h2 {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    padding-left: 0.5rem;
+    border-left: 4px solid var(--primary-color);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.info-field {
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 8px;
+    border-left: 3px solid var(--primary-color);
+}
+
+.info-field label {
+    display: block;
+    font-weight: 700;
+    color: #6b7280;
+    font-size: 0.85rem;
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-field .value {
+    display: block;
+    font-size: 1.1rem;
+    color: var(--dark-color);
+    font-weight: 600;
+}
+
+.badge-estado {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.badge-activo {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.badge-inactivo {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.email-section {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border-radius: 14px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.email-section h2 {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.email-section p {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    color: var(--dark-color);
+    font-weight: 600;
+}
+
+.email-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+.modern-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.modern-table thead {
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.modern-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.modern-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    color: var(--dark-color);
+}
+
+.modern-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+.modern-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.badge-validado {
+    background: #d1fae5;
+    color: #065f46;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.badge-pendiente {
+    background: #fef3c7;
+    color: #92400e;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.badge-rechazado {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.badge-aplicado {
+    background: #d1fae5;
+    color: #065f46;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.actions-section {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #f3f4f6;
+}
+
+@media (max-width: 768px) {
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .email-buttons {
+        flex-direction: column;
+    }
+    
+    .email-buttons .btn {
+        width: 100%;
+    }
+    
+    .actions-section {
+        flex-direction: column;
+    }
+    
+    .actions-section .btn {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ver-cliente-container">
+    <div class="page-header">
+        <h1>👤 Información del Cliente</h1>
+        <a href="{% url 'clientes_listar' %}" class="btn btn-secondary">← Volver</a>
+    </div>
+
+    <div class="info-card">
+        <h2>📋 Datos Personales</h2>
+        <div class="info-grid">
+            <div class="info-field">
+                <label>Documento</label>
+                <span class="value">{{ cliente.documento }}</span>
+            </div>
+            <div class="info-field">
+                <label>Nombre Completo</label>
+                <span class="value">{{ cliente.nombres }} {{ cliente.apellidos }}</span>
+            </div>
+            <div class="info-field">
+                <label>Email</label>
+                <span class="value">{{ cliente.email }}</span>
+            </div>
+            <div class="info-field">
+                <label>Celular</label>
+                <span class="value">{{ cliente.celular }}</span>
+            </div>
+            <div class="info-field">
+                <label>Peso</label>
+                <span class="value">{{ cliente.peso }} kg</span>
+            </div>
+            <div class="info-field">
+                <label>Fecha de Nacimiento</label>
+                <span class="value">{{ cliente.fecha_nacimiento|date:"d/m/Y" }}</span>
+            </div>
+            <div class="info-field">
+                <label>Membresía Actual</label>
+                <span class="value">
+                    {% if cliente.membresia_actual %}
+                        {{ cliente.membresia_actual.nombre }}
+                    {% else %}
+                        <span style="color: #9ca3af;">Sin membresía</span>
+                    {% endif %}
+                </span>
+            </div>
+            <div class="info-field">
+                <label>Fecha de Vencimiento</label>
+                <span class="value">
+                    {% if cliente.fecha_fin_membresia %}
+                        {{ cliente.fecha_fin_membresia|date:"d/m/Y" }}
+                    {% else %}
+                        <span style="color: #9ca3af;">N/A</span>
+                    {% endif %}
+                </span>
+            </div>
+            <div class="info-field">
+                <label>Estado</label>
+                <span class="value">
+                    {% if cliente.estado == 'activo' %}
+                        <span class="badge-estado badge-activo">✓ Activo</span>
+                    {% else %}
+                        <span class="badge-estado badge-inactivo">✗ Inactivo</span>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="email-section">
+        <h2>📧 Gestión de Emails</h2>
+        <p>Envía notificaciones por correo electrónico a este cliente</p>
+        <div class="email-buttons">
+            <a href="{% url 'enviar_email_renovacion_individual' cliente.documento %}" 
+               class="btn btn-success" 
+               onclick="return confirm('¿Enviar email de renovación a {{ cliente.email }}?')">
+                ✉️ Enviar Email de Renovación
+            </a>
+            <a href="{% url 'enviar_email_vencimiento_individual' cliente.documento %}" 
+               class="btn btn-warning" 
+               onclick="return confirm('¿Enviar email de vencimiento a {{ cliente.email }}?')">
+                ⚠️ Enviar Email de Vencimiento
+            </a>
+             <a href="{% url 'enviar_email_reactivacion_individual' cliente.documento %}" 
+               class="btn btn-danger"
+               onclick="return confirm('¿Enviar email de reactivación a {{ cliente.nombres }}?')">
+                📨 Enviar Email de Reactivación
+            </a>
+        </div>
+    </div>
+
+    {% if bonos %}
+    <div class="info-card">
+        <h2>🎁 Historial de Bonos</h2>
+        <div class="table-container">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Tipo de Bono</th>
+                        <th>Días Regalo</th>
+                        <th>Motivo</th>
+                        <th>Fecha Otorgado</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bono in bonos %}
+                    <tr>
+                        <td><strong>{{ bono.get_tipo_bono_display }}</strong></td>
+                        <td><strong style="color: var(--success-color);">+{{ bono.dias_regalo }} días</strong></td>
+                        <td>{{ bono.motivo }}</td>
+                        <td>{{ bono.fecha_otorgado|date:"d/m/Y H:i" }}</td>
+                        <td>
+                            {% if bono.aplicado %}
+                                <span class="badge-aplicado">✓ Aplicado</span>
+                            {% else %}
+                                <span class="badge-pendiente">⏳ Pendiente</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="info-card">
+        <h2>📜 Historial de Membresías</h2>
+        <div class="table-container">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Membresía</th>
+                        <th>Fecha Inicio</th>
+                        <th>Fecha Fin</th>
+                        <th>Precio Pagado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in historial %}
+                    <tr>
+                        <td><strong>{{ item.membresia.nombre }}</strong></td>
+                        <td>{{ item.fecha_inicio|date:"d/m/Y" }}</td>
+                        <td>{{ item.fecha_fin|date:"d/m/Y" }}</td>
+                        <td><strong>${{ item.precio_pagado|floatformat:0 }} COP</strong></td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: #9ca3af; padding: 2rem;">
+                            No hay historial de membresías
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% if pagos %}
+    <div class="info-card">
+        <h2>💰 Historial de Pagos</h2>
+        <div class="table-container">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Concepto</th>
+                        <th>Monto</th>
+                        <th>Método</th>
+                        <th>Estado</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pago in pagos %}
+                    <tr>
+                        <td><strong>#{{ pago.id }}</strong></td>
+                        <td>{{ pago.concepto }}</td>
+                        <td><strong style="color: var(--success-color);">${{ pago.monto|floatformat:0 }}</strong></td>
+                        <td>{{ pago.get_metodo_pago_display }}</td>
+                        <td>
+                            {% if pago.estado == 'validado' %}
+                                <span class="badge-validado">✓ Validado</span>
+                            {% elif pago.estado == 'pendiente' %}
+                                <span class="badge-pendiente">⏳ Pendiente</span>
+                            {% else %}
+                                <span class="badge-rechazado">✗ Rechazado</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ pago.fecha_pago|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="actions-section">
+        <a href="{% url 'clientes_editar' cliente.documento %}" class="btn btn-success">✏️ Editar Cliente</a>
+        <a href="{% url 'clientes_renovar' cliente.documento %}" class="btn btn-primary">🔄 Renovar Membresía</a>
+        <a href="{% url 'cliente_asistencias' cliente.documento %}" class="btn btn-info">📊 Ver Asistencias</a>
+        <a href="{% url 'clientes_listar' %}" class="btn btn-secondary">← Volver a Lista</a>
+    </div>
+</div>
+{% endblock %}

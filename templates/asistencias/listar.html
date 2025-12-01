@@ -1,0 +1,248 @@
+{% extends 'base.html' %}
+
+{% block title %}Registro de Asistencias - FITTECH{% endblock %}
+
+{% block extra_css %}
+<style>
+.asistencias-container {
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.filter-card {
+    background: white;
+    border-radius: 14px;
+    padding: 2rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 2rem;
+}
+
+.filter-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 1rem;
+    align-items: end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    font-weight: 700;
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.filter-group select {
+    padding: 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s;
+    background: white;
+}
+
+.filter-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.stats-card {
+    background: white;
+    border-radius: 14px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px;
+}
+
+.stat-item .number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    display: block;
+}
+
+.stat-item .label {
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+    opacity: 0.9;
+}
+
+.table-card {
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.modern-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.modern-table thead {
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.modern-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.modern-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.modern-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+.modern-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.empty-state-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    color: #6b7280;
+}
+
+@media (max-width: 768px) {
+    .filter-form {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-card {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="asistencias-container">
+    <div class="page-header">
+        <h1>📊 Registro de Asistencias</h1>
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary"> Volver al Dashboard</a>
+    </div>
+
+    <div class="filter-card">
+        <form method="GET" class="filter-form">
+            <div class="filter-group">
+                <label for="mes">Mes</label>
+                <select name="mes" id="mes">
+                    <option value="1" {% if mes == 1 %}selected{% endif %}>Enero</option>
+                    <option value="2" {% if mes == 2 %}selected{% endif %}>Febrero</option>
+                    <option value="3" {% if mes == 3 %}selected{% endif %}>Marzo</option>
+                    <option value="4" {% if mes == 4 %}selected{% endif %}>Abril</option>
+                    <option value="5" {% if mes == 5 %}selected{% endif %}>Mayo</option>
+                    <option value="6" {% if mes == 6 %}selected{% endif %}>Junio</option>
+                    <option value="7" {% if mes == 7 %}selected{% endif %}>Julio</option>
+                    <option value="8" {% if mes == 8 %}selected{% endif %}>Agosto</option>
+                    <option value="9" {% if mes == 9 %}selected{% endif %}>Septiembre</option>
+                    <option value="10" {% if mes == 10 %}selected{% endif %}>Octubre</option>
+                    <option value="11" {% if mes == 11 %}selected{% endif %}>Noviembre</option>
+                    <option value="12" {% if mes == 12 %}selected{% endif %}>Diciembre</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="anio">Año</label>
+                <select name="anio" id="anio">
+                    {% for a in anios_disponibles %}
+                    <option value="{{ a }}" {% if anio == a %}selected{% endif %}>{{ a }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">🔍 Filtrar</button>
+        </form>
+    </div>
+
+    <div class="stats-card">
+        <div class="stat-item">
+            <span class="number">{{ total_asistencias }}</span>
+            <span class="label">Total Asistencias</span>
+        </div>
+        <div class="stat-item">
+            <span class="number">{{ clientes_unicos }}</span>
+            <span class="label">Clientes Únicos</span>
+        </div>
+        <div class="stat-item">
+            <span class="number">{{ mes_nombre }} {{ anio }}</span>
+            <span class="label">Período Seleccionado</span>
+        </div>
+    </div>
+
+    {% if asistencias %}
+    <div class="table-card">
+        <table class="modern-table">
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Documento</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Registrado por</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for asistencia in asistencias %}
+                <tr>
+                    <td><strong>{{ asistencia.cliente.nombres }} {{ asistencia.cliente.apellidos }}</strong></td>
+                    <td>{{ asistencia.cliente.documento }}</td>
+                    <td>{{ asistencia.fecha|date:"d/m/Y" }}</td>
+                    <td>{{ asistencia.hora|time:"H:i:s" }}</td>
+                    <td>
+                        {% if asistencia.usuario_registro %}
+                            {{ asistencia.usuario_registro.nombre }}
+                        {% else %}
+                            <span style="color: #9ca3af;">Sistema</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="table-card">
+        <div class="empty-state">
+            <div class="empty-state-icon"></div>
+            <h3>No hay asistencias registradas</h3>
+            <p>No se encontraron asistencias para {{ mes_nombre }} de {{ anio }}</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

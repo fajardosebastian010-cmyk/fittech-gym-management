@@ -1,0 +1,52 @@
+# Django #
+*.log
+*.pot
+*.pyc
+__pycache__/
+db.sqlite3
+media/
+staticfiles/
+
+# Variables de entorno - IMPORTANTE
+.env
+*.env
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv
+
+# VS Code
+.vscode/
+.history/
+
+# PyCharm
+.idea/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de backup
+*.bak
+*.swp
+*~
+
+# Python
+*.py[cod]
+*$py.class
+.Python
+build/
+dist/
+*.egg-info/
+
+# MySQL dumps
+*.sql
+*.dump
+backups/
+
+# Coverage reports
+htmlcov/
+.coverage
+.pytest_cache/

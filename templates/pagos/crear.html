@@ -1,0 +1,615 @@
+{% extends 'base.html' %}
+
+{% block title %}Registrar Pago - FITTECH{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* CONTENEDOR PRINCIPAL */
+    .form-container {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        animation: slideUp 0.5s ease-out;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* HEADER DEL FORMULARIO */
+    .form-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 3px solid #f3f4f6;
+    }
+
+    .form-header h2 {
+        font-size: 2rem;
+        color: var(--success-color);
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+    }
+
+    .form-header p {
+        color: #6b7280;
+        font-size: 1rem;
+    }
+
+    /* VISTA PREVIA */
+    .preview-card {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        padding: 2rem;
+        border-radius: 15px;
+        color: white;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+    }
+
+    .preview-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+    }
+
+    .preview-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .preview-amount {
+        font-size: 2.5rem;
+        font-weight: 700;
+    }
+
+    .preview-content {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 1.5rem;
+        border-radius: 10px;
+        backdrop-filter: blur(10px);
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .preview-content {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .preview-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+
+    .preview-label {
+        opacity: 0.8;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .preview-value {
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    /* BÚSQUEDA DE CLIENTE */
+    .search-box {
+        background: #f0fdf4;
+        border: 2px solid #86efac;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .search-input-group {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .btn-buscar {
+        padding: 0.9rem 1.5rem;
+        background: #10b981;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        white-space: nowrap;
+    }
+
+    .btn-buscar:hover {
+        background: #059669;
+        transform: translateY(-2px);
+    }
+
+    /* INFO CLIENTE */
+    .info-cliente-box {
+        background: #f0fdf4;
+        border: 2px solid #86efac;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        display: none;
+    }
+
+    .info-cliente-box h3 {
+        color: #065f46;
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem;
+        background: white;
+        border-radius: 8px;
+    }
+
+    .info-label {
+        color: #059669;
+        font-weight: 600;
+    }
+
+    .info-value {
+        color: #047857;
+        font-weight: 700;
+    }
+
+    /* SECCIONES DEL FORMULARIO */
+    .form-section {
+        margin-bottom: 2.5rem;
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid #e5e7eb;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* GRUPOS DE FORMULARIO */
+    .form-group {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.6rem;
+        font-weight: 600;
+        color: var(--dark-color);
+        font-size: 0.95rem;
+    }
+
+    /* INPUTS */
+    .form-input,
+    .form-select {
+        width: 100%;
+        padding: 0.9rem 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f9fafb;
+    }
+
+    .form-input:focus,
+    .form-select:focus {
+        outline: none;
+        border-color: var(--success-color);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .form-input:valid {
+        border-color: var(--success-color);
+    }
+
+    .form-input:disabled,
+    .form-select:disabled {
+        background: #f3f4f6;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    /* TEXTAREA */
+    textarea.form-input {
+        min-height: 100px;
+        resize: vertical;
+        font-family: inherit;
+    }
+
+    /* HELPER TEXT */
+    .helper-text {
+        margin-top: 0.4rem;
+        font-size: 0.85rem;
+        color: #6b7280;
+    }
+
+    /* BOTONES */
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2.5rem;
+        padding-top: 2rem;
+        border-top: 2px solid #f3f4f6;
+    }
+
+    .btn-submit {
+        flex: 1;
+        padding: 1rem 2rem;
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-submit::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transition: left 0.5s ease;
+    }
+
+    .btn-submit:hover::before {
+        left: 100%;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-submit:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .btn-cancel {
+        padding: 1rem 2rem;
+        background: #f3f4f6;
+        color: #374151;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-cancel:hover {
+        background: #e5e7eb;
+        border-color: #d1d5db;
+        transform: translateY(-2px);
+    }
+
+    /* LOADER */
+    .loader {
+        display: none;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-top: 3px solid white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .btn-submit.loading .loader {
+        display: inline-block;
+    }
+
+    .btn-submit.loading .btn-text {
+        display: none;
+    }
+
+    /* REQUIRED */
+    .required {
+        color: var(--danger-color);
+        margin-left: 0.2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Registrar Nuevo Pago</h1>
+    <a href="{% url 'pagos_listar' %}" class="btn btn-secondary">← Volver</a>
+</div>
+
+<div class="form-container">
+    <!-- VISTA PREVIA -->
+    <div class="preview-card">
+        <div class="preview-header">
+            <div class="preview-title">Resumen del Pago</div>
+            <div class="preview-amount" id="previewMonto">$0</div>
+        </div>
+        <div class="preview-content">
+            <div class="preview-item">
+                <span class="preview-label">Cliente</span>
+                <span class="preview-value" id="previewCliente">Buscar cliente</span>
+            </div>
+            <div class="preview-item">
+                <span class="preview-label">Membresía</span>
+                <span class="preview-value" id="previewMembresia">---</span>
+            </div>
+            <div class="preview-item">
+                <span class="preview-label">Método</span>
+                <span class="preview-value" id="previewMetodo">---</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- FORMULARIO -->
+    <div class="form-card">
+        <div class="form-header">
+            <h2>Registrar Pago</h2>
+            <p>Complete la información del pago</p>
+        </div>
+
+        <!-- BÚSQUEDA DE CLIENTE -->
+        <div class="search-box">
+            <label style="font-weight: 600; margin-bottom: 0.5rem; display: block; color: #065f46;">
+                🔍 Buscar Cliente por Documento
+            </label>
+            <div class="search-input-group">
+                <input 
+                    type="text" 
+                    id="documento-buscar" 
+                    class="form-input" 
+                    placeholder="Ingrese número de documento"
+                    inputmode="numeric"
+                    maxlength="20"
+                    style="flex: 1;"
+                    autofocus>
+                <button type="button" id="btn-buscar" class="btn-buscar">
+                    Buscar
+                </button>
+            </div>
+        </div>
+
+        <!-- INFORMACIÓN DEL CLIENTE ENCONTRADO -->
+        <div id="info-cliente-box" class="info-cliente-box">
+            <h3>✓ Cliente Encontrado</h3>
+            <div class="info-grid">
+                <div class="info-row">
+                    <span class="info-label">Nombre:</span>
+                    <span class="info-value" id="cliente-nombre"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Documento:</span>
+                    <span class="info-value" id="cliente-documento"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Membresía:</span>
+                    <span class="info-value" id="cliente-membresia"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Monto:</span>
+                    <span class="info-value" id="cliente-monto"></span>
+                </div>
+            </div>
+        </div>
+
+        <form method="POST" id="pagoForm">
+            {% csrf_token %}
+            <input type="hidden" id="documento" name="documento">
+            <input type="hidden" name="tipo_pago" value="membresia">
+            
+            <!-- DETALLES DEL PAGO -->
+            <div class="form-section">
+                <div class="section-title">
+                    💳 Detalles del Pago
+                </div>
+
+                <div class="form-group">
+                    <label for="metodo_pago">
+                        Método de Pago <span class="required">*</span>
+                    </label>
+                    <select name="metodo_pago" id="metodo_pago" class="form-select" required disabled>
+                        <option value="">Seleccione método</option>
+                        {% for value, label in metodos_pago %}
+                        <option value="{{ value }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="helper-text">
+                        Forma de pago utilizada
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="comprobante">
+                        Número de Comprobante/Referencia (Opcional)
+                    </label>
+                    <input type="text" 
+                           name="comprobante" 
+                           id="comprobante" 
+                           class="form-input" 
+                           placeholder="Ej: 123456789"
+                           maxlength="100"
+                           disabled>
+                    <div class="helper-text">
+                        Número de transacción o referencia
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="observaciones">
+                        Observaciones (Opcional)
+                    </label>
+                    <textarea name="observaciones" 
+                              id="observaciones" 
+                              class="form-input" 
+                              placeholder="Observaciones adicionales..."
+                              maxlength="500"
+                              disabled></textarea>
+                    <div class="helper-text">
+                        Información adicional sobre el pago
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'pagos_listar' %}" class="btn-cancel">
+                    Cancelar
+                </a>
+                <button type="submit" class="btn-submit" id="btnSubmit" disabled>
+                    <span class="btn-text">Registrar Pago</span>
+                    <div class="loader"></div>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const documentoBuscar = document.getElementById('documento-buscar');
+const btnBuscar = document.getElementById('btn-buscar');
+const infoClienteBox = document.getElementById('info-cliente-box');
+const formPago = document.getElementById('pagoForm');
+const btnSubmit = document.getElementById('btnSubmit');
+const metodoPagoSelect = document.getElementById('metodo_pago');
+const comprobanteInput = document.getElementById('comprobante');
+const observacionesInput = document.getElementById('observaciones');
+const documentoHidden = document.getElementById('documento');
+
+// Buscar cliente por documento
+btnBuscar.addEventListener('click', buscarCliente);
+documentoBuscar.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        buscarCliente();
+    }
+});
+
+async function buscarCliente() {
+    const documento = documentoBuscar.value.trim();
+    
+    if (!documento) {
+        alert('Por favor ingrese un número de documento');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/cliente/${documento}/`);
+        const data = await response.json();
+
+        if (data.success) {
+            // Mostrar información del cliente
+            document.getElementById('cliente-nombre').textContent = data.cliente.nombres + ' ' + data.cliente.apellidos;
+            document.getElementById('cliente-documento').textContent = data.cliente.documento;
+            document.getElementById('cliente-membresia').textContent = data.cliente.membresia;
+            document.getElementById('cliente-monto').textContent = '$' + data.cliente.monto.toLocaleString('es-CO');
+            
+            // Actualizar preview
+            document.getElementById('previewCliente').textContent = data.cliente.nombres + ' ' + data.cliente.apellidos;
+            document.getElementById('previewMembresia').textContent = data.cliente.membresia;
+            document.getElementById('previewMonto').textContent = '$' + data.cliente.monto.toLocaleString('es-CO');
+            
+            infoClienteBox.style.display = 'block';
+            
+            // Habilitar el formulario
+            documentoHidden.value = documento;
+            metodoPagoSelect.disabled = false;
+            comprobanteInput.disabled = false;
+            observacionesInput.disabled = false;
+            btnSubmit.disabled = false;
+            
+            metodoPagoSelect.focus();
+        } else {
+            alert('❌ ' + data.message);
+            infoClienteBox.style.display = 'none';
+            metodoPagoSelect.disabled = true;
+            comprobanteInput.disabled = true;
+            observacionesInput.disabled = true;
+            btnSubmit.disabled = true;
+        }
+    } catch (error) {
+        alert('Error al buscar el cliente');
+        console.error(error);
+    }
+}
+
+// VISTA PREVIA - MÉTODO
+metodoPagoSelect.addEventListener('change', function() {
+    const selectedText = this.options[this.selectedIndex].text;
+    document.getElementById('previewMetodo').textContent = selectedText || '---';
+});
+
+// ANIMACIÓN AL ENVIAR
+formPago.addEventListener('submit', function(e) {
+    btnSubmit.classList.add('loading');
+    btnSubmit.disabled = true;
+});
+
+documentoBuscar.focus();
+</script>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Ver Membresía - FITTECH{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1 style="font-size: 2rem; color: var(--dark-color); margin-bottom: 2rem; font-weight: bold;">Detalles de la Membresía</h1>
+
+    <div style="background: var(--light-color); padding: 2rem; border-radius: 0.5rem; margin-bottom: 2rem;">
+        <div style="margin-bottom: 1.5rem;">
+            <label style="font-weight: 700; color: var(--dark-color); font-size: 1rem; display: block; margin-bottom: 0.5rem;">Nombre:</label>
+            <p style="font-size: 1.25rem; color: var(--primary-color); font-weight: 600;">{{ membresia.nombre }}</p>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <label style="font-weight: 700; color: var(--dark-color); font-size: 1rem; display: block; margin-bottom: 0.5rem;">Duración:</label>
+            <p style="font-size: 1.125rem; font-weight: 600;">{{ membresia.duracion_dias }} días</p>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <label style="font-weight: 700; color: var(--dark-color); font-size: 1rem; display: block; margin-bottom: 0.5rem;">Precio:</label>
+            <p style="font-size: 1.5rem; color: var(--success-color); font-weight: bold;">${{ membresia.precio|floatformat:0 }} COP</p>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <label style="font-weight: 700; color: var(--dark-color); font-size: 1rem; display: block; margin-bottom: 0.5rem;">Descripción:</label>
+            <p style="font-size: 1rem; font-weight: 500;">{{ membresia.descripcion|default:"Sin descripción" }}</p>
+        </div>
+
+        <div>
+            <label style="font-weight: 700; color: var(--dark-color); font-size: 1rem; display: block; margin-bottom: 0.5rem;">Fecha de Creación:</label>
+            <p style="font-size: 1rem; font-weight: 500;">{{ membresia.fecha_creacion|date:"d/m/Y H:i" }}</p>
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 1rem;">
+        <a href="{% url 'membresias_editar' membresia.id %}" class="btn btn-success">Editar</a>
+        <a href="{% url 'membresias_listar' %}" class="btn btn-primary">Volver al Listado</a>
+    </div>
+</div>
+{% endblock %}

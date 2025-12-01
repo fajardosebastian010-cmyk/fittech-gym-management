@@ -1,0 +1,504 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Membresía - FITTECH{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* CONTENEDOR PRINCIPAL */
+    .form-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        animation: slideUp 0.5s ease-out;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* HEADER DEL FORMULARIO */
+    .form-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 3px solid #f3f4f6;
+    }
+
+    .form-header .icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        display: inline-block;
+        animation: bounce 1s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .form-header h2 {
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+    }
+
+    .form-header p {
+        color: #6b7280;
+        font-size: 1rem;
+    }
+
+    /* GRUPOS DE FORMULARIO */
+    .form-group {
+        margin-bottom: 2rem;
+        position: relative;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+        color: var(--dark-color);
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .label-icon {
+        font-size: 1.2rem;
+    }
+
+    /* INPUTS MEJORADOS */
+    .input-wrapper {
+        position: relative;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 1rem 1.2rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f9fafb;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .form-input:valid {
+        border-color: var(--success-color);
+    }
+
+    /* TEXTAREA */
+    textarea.form-input {
+        min-height: 120px;
+        resize: vertical;
+        font-family: inherit;
+    }
+
+    /* INPUT GROUPS CON PREFIJO */
+    .input-prefix {
+        position: relative;
+    }
+
+    .input-prefix .prefix-text {
+        position: absolute;
+        left: 1.2rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-weight: 600;
+        color: #6b7280;
+        font-size: 1.1rem;
+    }
+
+    .input-prefix .form-input {
+        padding-left: 3rem;
+    }
+
+    /* HELPER TEXT */
+    .helper-text {
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+        color: #6b7280;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    /* GRID DE 2 COLUMNAS */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* BOTONES DE ACCIÓN */
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2.5rem;
+        padding-top: 2rem;
+        border-top: 2px solid #f3f4f6;
+    }
+
+    .btn-submit {
+        flex: 1;
+        padding: 1rem 2rem;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-submit::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transition: left 0.5s ease;
+    }
+
+    .btn-submit:hover::before {
+        left: 100%;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-cancel {
+        padding: 1rem 2rem;
+        background: #f3f4f6;
+        color: #374151;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-cancel:hover {
+        background: #e5e7eb;
+        border-color: #d1d5db;
+        transform: translateY(-2px);
+    }
+
+    /* VISTA PREVIA */
+    .preview-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 1.5rem;
+        border-radius: 15px;
+        color: white;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    .preview-card h3 {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+        opacity: 0.9;
+    }
+
+    .preview-content {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 1rem;
+        border-radius: 10px;
+        backdrop-filter: blur(10px);
+    }
+
+    .preview-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .preview-item:last-child {
+        border-bottom: none;
+    }
+
+    .preview-label {
+        opacity: 0.9;
+    }
+
+    .preview-value {
+        font-weight: 700;
+    }
+
+    /* ANIMACIÓN DE CARGA */
+    .loader {
+        display: none;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-top: 3px solid white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .btn-submit.loading .loader {
+        display: inline-block;
+    }
+
+    .btn-submit.loading .btn-text {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>✏️ Editar Membresía</h1>
+    <a href="{% url 'membresias_listar' %}" class="btn btn-secondary">← Volver</a>
+</div>
+
+<div class="form-container">
+    <!-- VISTA PREVIA -->
+    <div class="preview-card" id="previewCard">
+        <h3>📋 Vista Previa</h3>
+        <div class="preview-content">
+            <div class="preview-item">
+                <span class="preview-label">Nombre:</span>
+                <span class="preview-value" id="previewNombre">{{ membresia.nombre }}</span>
+            </div>
+            <div class="preview-item">
+                <span class="preview-label">Duración:</span>
+                <span class="preview-value" id="previewDuracion">{{ membresia.duracion_dias }} días</span>
+            </div>
+            <div class="preview-item">
+                <span class="preview-label">Precio:</span>
+                <span class="preview-value" id="previewPrecio">${{ membresia.precio|floatformat:0 }} COP</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- FORMULARIO -->
+    <div class="form-card">
+        <div class="form-header">
+            <div class="icon"></div>
+            <h2>Editar Información de Membresía</h2>
+            <p>Actualiza los detalles de la membresía</p>
+        </div>
+
+        <form method="POST" id="editForm">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="nombre">
+                    <span class="label-icon"></span>
+                    Nombre de la Membresía
+                </label>
+                <div class="input-wrapper">
+                    <input type="text" 
+                           name="nombre" 
+                           id="nombre" 
+                           class="form-input" 
+                           value="{{ membresia.nombre }}"
+                           placeholder="Ej: Membresía Premium"
+                           required
+                           maxlength="100">
+                </div>
+                <div class="helper-text">
+                     Nombre descriptivo y atractivo para la membresía
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="duracion_dias">
+                        <span class="label-icon"></span>
+                        Duración (días)
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="number" 
+                               name="duracion_dias" 
+                               id="duracion_dias" 
+                               class="form-input" 
+                               value="{{ membresia.duracion_dias }}"
+                               placeholder="30"
+                               required
+                               min="1"
+                               max="365">
+                    </div>
+                    <div class="helper-text">
+                         Entre 1 y 365 días
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="precio">
+                        <span class="label-icon"></span>
+                        Precio (COP)
+                    </label>
+                    <div class="input-wrapper input-prefix">
+                        <span class="prefix-text">$</span>
+                        <input type="number" 
+                               name="precio" 
+                               id="precio" 
+                               class="form-input" 
+                               value="{{ membresia.precio|floatformat:0 }}"
+                               placeholder="50000"
+                               required
+                               min="1000"
+                               step="1000">
+                    </div>
+                    <div class="helper-text">
+                         Precio en pesos colombianos
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="descripcion">
+                    <span class="label-icon"></span>
+                    Descripción (Opcional)
+                </label>
+                <div class="input-wrapper">
+                    <textarea name="descripcion" 
+                              id="descripcion" 
+                              class="form-input" 
+                              placeholder="Describe los beneficios y características de esta membresía..."
+                              maxlength="500">{{ membresia.descripcion }}</textarea>
+                </div>
+                <div class="helper-text">
+                     Máximo 500 caracteres
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'membresias_listar' %}" class="btn-cancel">
+                    ✕ Cancelar
+                </a>
+                <button type="submit" class="btn-submit" id="btnSubmit">
+                    <span class="btn-text"> Guardar Cambios</span>
+                    <div class="loader"></div>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // VISTA PREVIA EN TIEMPO REAL
+    document.getElementById('nombre').addEventListener('input', function(e) {
+        document.getElementById('previewNombre').textContent = e.target.value || '---';
+    });
+
+    document.getElementById('duracion_dias').addEventListener('input', function(e) {
+        document.getElementById('previewDuracion').textContent = e.target.value ? e.target.value + ' días' : '--- días';
+    });
+
+    document.getElementById('precio').addEventListener('input', function(e) {
+        const valor = parseFloat(e.target.value) || 0;
+        document.getElementById('previewPrecio').textContent = '$' + valor.toLocaleString('es-CO') + ' COP';
+    });
+
+    // ANIMACIÓN AL ENVIAR
+    document.getElementById('editForm').addEventListener('submit', function(e) {
+        const btn = document.getElementById('btnSubmit');
+        btn.classList.add('loading');
+        btn.disabled = true;
+    });
+
+    // VALIDACIÓN EN TIEMPO REAL
+    const inputs = document.querySelectorAll('.form-input');
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.checkValidity()) {
+                this.style.borderColor = 'var(--success-color)';
+            } else {
+                this.style.borderColor = '#e5e7eb';
+            }
+        });
+    });
+
+    // ANIMACIÓN DE ENTRADA
+    const formCard = document.querySelector('.form-card');
+    const previewCard = document.querySelector('.preview-card');
+    
+    setTimeout(() => {
+        previewCard.style.animation = 'slideUp 0.5s ease-out';
+    }, 100);
+
+    setTimeout(() => {
+        formCard.style.animation = 'slideUp 0.5s ease-out';
+    }, 200);
+
+    // FORMATO DE PRECIO AL PERDER FOCO
+    document.getElementById('precio').addEventListener('blur', function() {
+        const valor = parseInt(this.value) || 0;
+        // Redondear a múltiplo de 1000
+        const redondeado = Math.round(valor / 1000) * 1000;
+        this.value = redondeado;
+        document.getElementById('previewPrecio').textContent = '$' + redondeado.toLocaleString('es-CO') + ' COP';
+    });
+
+    // CONTADOR DE CARACTERES PARA DESCRIPCIÓN
+    const descripcion = document.getElementById('descripcion');
+    if (descripcion) {
+        const maxChars = 500;
+        const helperText = descripcion.parentElement.nextElementSibling;
+        
+        descripcion.addEventListener('input', function() {
+            const remaining = maxChars - this.value.length;
+            helperText.innerHTML = `ℹ️ ${remaining} caracteres restantes`;
+            
+            if (remaining < 50) {
+                helperText.style.color = 'var(--warning-color)';
+            } else {
+                helperText.style.color = '#6b7280';
+            }
+        });
+    }
+</script>
+{% endblock %}

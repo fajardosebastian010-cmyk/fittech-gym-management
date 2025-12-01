@@ -1,0 +1,660 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Pago - FITTECH{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* CONTENEDOR PRINCIPAL */
+    .form-container {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        animation: slideUp 0.5s ease-out;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* HEADER DEL FORMULARIO */
+    .form-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 3px solid #f3f4f6;
+    }
+
+    .form-header h2 {
+        font-size: 2rem;
+        color: var(--warning-color);
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+    }
+
+    .form-header p {
+        color: #6b7280;
+        font-size: 1rem;
+    }
+
+    /* ALERTA DE ESTADO */
+    .status-alert {
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-weight: 600;
+    }
+
+    .status-alert.pendiente {
+        background: #fef3c7;
+        color: #92400e;
+        border-left: 4px solid #f59e0b;
+    }
+
+    .status-alert.validado {
+        background: #d1fae5;
+        color: #065f46;
+        border-left: 4px solid #10b981;
+    }
+
+    .status-alert.rechazado {
+        background: #fee2e2;
+        color: #991b1b;
+        border-left: 4px solid #ef4444;
+    }
+
+    /* VISTA PREVIA */
+    .preview-card {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        padding: 2rem;
+        border-radius: 15px;
+        color: white;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(245, 158, 11, 0.3);
+    }
+
+    .preview-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+    }
+
+    .preview-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .preview-amount {
+        font-size: 2.5rem;
+        font-weight: 700;
+    }
+
+    .preview-content {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 1.5rem;
+        border-radius: 10px;
+        backdrop-filter: blur(10px);
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .preview-content {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .preview-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+
+    .preview-label {
+        opacity: 0.8;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .preview-value {
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    /* SECCIONES DEL FORMULARIO */
+    .form-section {
+        margin-bottom: 2.5rem;
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid #e5e7eb;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* GRUPOS DE FORMULARIO */
+    .form-group {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.6rem;
+        font-weight: 600;
+        color: var(--dark-color);
+        font-size: 0.95rem;
+    }
+
+    /* INPUTS */
+    .form-input,
+    .form-select {
+        width: 100%;
+        padding: 0.9rem 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f9fafb;
+    }
+
+    .form-input:focus,
+    .form-select:focus {
+        outline: none;
+        border-color: var(--warning-color);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .form-input:valid {
+        border-color: var(--success-color);
+    }
+
+    /* TEXTAREA */
+    textarea.form-input {
+        min-height: 100px;
+        resize: vertical;
+        font-family: inherit;
+    }
+
+    /* INPUT CON PREFIJO */
+    .input-prefix {
+        position: relative;
+    }
+
+    .input-prefix .prefix-text {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-weight: 600;
+        color: #6b7280;
+        font-size: 1.1rem;
+    }
+
+    .input-prefix .form-input {
+        padding-left: 2.5rem;
+    }
+
+    /* GRID */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* HELPER TEXT */
+    .helper-text {
+        margin-top: 0.4rem;
+        font-size: 0.85rem;
+        color: #6b7280;
+    }
+
+    /* INFO BOX */
+    .info-box {
+        background: #f3f4f6;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid var(--info-color);
+    }
+
+    .info-box-title {
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .info-box-content {
+        font-size: 0.95rem;
+        color: #6b7280;
+    }
+
+    /* BOTONES */
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2.5rem;
+        padding-top: 2rem;
+        border-top: 2px solid #f3f4f6;
+    }
+
+    .btn-submit {
+        flex: 1;
+        padding: 1rem 2rem;
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-submit::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transition: left 0.5s ease;
+    }
+
+    .btn-submit:hover::before {
+        left: 100%;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(245, 158, 11, 0.4);
+    }
+
+    .btn-cancel {
+        padding: 1rem 2rem;
+        background: #f3f4f6;
+        color: #374151;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-cancel:hover {
+        background: #e5e7eb;
+        border-color: #d1d5db;
+        transform: translateY(-2px);
+    }
+
+    /* LOADER */
+    .loader {
+        display: none;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-top: 3px solid white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .btn-submit.loading .loader {
+        display: inline-block;
+    }
+
+    .btn-submit.loading .btn-text {
+        display: none;
+    }
+
+    /* REQUIRED */
+    .required {
+        color: var(--danger-color);
+        margin-left: 0.2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Editar Pago</h1>
+    <a href="{% url 'pagos_listar' %}" class="btn btn-secondary">← Volver</a>
+</div>
+
+<div class="form-container">
+    <!-- ALERTA DE ESTADO -->
+    <div class="status-alert {{ pago.estado }}">
+        {% if pago.estado == 'pendiente' %}
+            <strong>ESTADO:</strong> Este pago está PENDIENTE de validación
+        {% elif pago.estado == 'validado' %}
+            <strong>ESTADO:</strong> Este pago ya fue VALIDADO
+        {% elif pago.estado == 'rechazado' %}
+            <strong>ESTADO:</strong> Este pago fue RECHAZADO
+        {% endif %}
+    </div>
+
+    <!-- VISTA PREVIA -->
+    <div class="preview-card">
+        <div class="preview-header">
+            <div class="preview-title">Pago #{{ pago.id }}</div>
+            <div class="preview-amount" id="previewMonto">${{ pago.monto|floatformat:0 }}</div>
+        </div>
+        <div class="preview-content">
+            <div class="preview-item">
+                <span class="preview-label">Cliente</span>
+                <span class="preview-value">{{ pago.cliente.nombres }}</span>
+            </div>
+            <div class="preview-item">
+                <span class="preview-label">Método</span>
+                <span class="preview-value" id="previewMetodo">{{ pago.get_metodo_pago_display }}</span>
+            </div>
+            <div class="preview-item">
+                <span class="preview-label">Concepto</span>
+                <span class="preview-value" id="previewConcepto">{{ pago.concepto }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- INFO BOX -->
+    <div class="info-box">
+        <div class="info-box-title">
+            Información del Pago
+        </div>
+        <div class="info-box-content">
+            <strong>Cliente:</strong> {{ pago.cliente.nombres }} {{ pago.cliente.apellidos }} ({{ pago.cliente.documento }})<br>
+            <strong>Fecha de registro:</strong> {{ pago.fecha_pago|date:"d/m/Y H:i" }}<br>
+            <strong>Estado actual:</strong> {{ pago.get_estado_display }}<br>
+            {% if pago.estado != 'pendiente' %}
+            <strong>Nota:</strong> Solo se pueden editar pagos con estado PENDIENTE
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- FORMULARIO -->
+    <div class="form-card">
+        <div class="form-header">
+            <h2>Editar Información del Pago</h2>
+            <p>Modifica los detalles del pago #{{ pago.id }}</p>
+        </div>
+
+        <form method="POST" id="editForm">
+            {% csrf_token %}
+            
+            <!-- TIPO DE PAGO -->
+            <div class="form-section">
+                <div class="section-title">
+                    Tipo de Pago
+                </div>
+
+                <div class="form-group">
+                    <label for="tipo_pago">
+                        Tipo de Pago <span class="required">*</span>
+                    </label>
+                    <select name="tipo_pago" id="tipo_pago" class="form-select" required>
+                        <option value="membresia" {% if pago.tipo_pago == 'membresia' %}selected{% endif %}>Membresía</option>
+                        <option value="otro" {% if pago.tipo_pago == 'otro' %}selected{% endif %}>Otro</option>
+                    </select>
+                    <div class="helper-text">
+                        Categoría del pago
+                    </div>
+                </div>
+
+                <div class="form-group" id="membresiaGroup" {% if pago.tipo_pago != 'membresia' %}style="display: none;"{% endif %}>
+                    <label for="membresia">
+                        Membresía (Opcional)
+                    </label>
+                    <select name="membresia" id="membresia" class="form-select">
+                        <option value="">Ninguna</option>
+                        {% for membresia in membresias %}
+                        <option value="{{ membresia.id }}" {% if pago.membresia and membresia.id == pago.membresia.id %}selected{% endif %}>
+                            {{ membresia.nombre }} - {{ membresia.duracion_dias }} días - ${{ membresia.precio|floatformat:0 }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <div class="helper-text">
+                        Selecciona si el pago es por una membresía
+                    </div>
+                </div>
+            </div>
+
+            <!-- DETALLES DEL PAGO -->
+            <div class="form-section">
+                <div class="section-title">
+                    Detalles del Pago
+                </div>
+
+                <div class="form-group">
+                    <label for="concepto">
+                        Concepto <span class="required">*</span>
+                    </label>
+                    <input type="text" 
+                           name="concepto" 
+                           id="concepto" 
+                           class="form-input" 
+                           value="{{ pago.concepto }}"
+                           placeholder="Ej: Pago de membresía mensual"
+                           required
+                           maxlength="200">
+                    <div class="helper-text">
+                        Descripción breve del pago
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="monto">
+                            Monto (COP) <span class="required">*</span>
+                        </label>
+                        <div class="input-prefix">
+                            <span class="prefix-text">$</span>
+                            <input type="number" 
+                                   name="monto" 
+                                   id="monto" 
+                                   class="form-input" 
+                                   value="{{ pago.monto|floatformat:0 }}"
+                                   placeholder="50000"
+                                   required
+                                   min="1000"
+                                   step="1000">
+                        </div>
+                        <div class="helper-text">
+                            Valor en pesos colombianos
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="metodo_pago">
+                            Método de Pago <span class="required">*</span>
+                        </label>
+                        <select name="metodo_pago" id="metodo_pago" class="form-select" required>
+                            <option value="efectivo" {% if pago.metodo_pago == 'efectivo' %}selected{% endif %}>Efectivo</option>
+                            <option value="transferencia" {% if pago.metodo_pago == 'transferencia' %}selected{% endif %}>Transferencia</option>
+                            <option value="tarjeta" {% if pago.metodo_pago == 'tarjeta' %}selected{% endif %}>Tarjeta</option>
+                            <option value="nequi" {% if pago.metodo_pago == 'nequi' %}selected{% endif %}>Nequi</option>
+                            <option value="daviplata" {% if pago.metodo_pago == 'daviplata' %}selected{% endif %}>Daviplata</option>
+                        </select>
+                        <div class="helper-text">
+                            Forma de pago utilizada
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="comprobante">
+                        Número de Comprobante/Referencia (Opcional)
+                    </label>
+                    <input type="text" 
+                           name="comprobante" 
+                           id="comprobante" 
+                           class="form-input" 
+                           value="{{ pago.comprobante }}"
+                           placeholder="Ej: 123456789"
+                           maxlength="100">
+                    <div class="helper-text">
+                        Número de transacción o referencia
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="observaciones">
+                        Observaciones (Opcional)
+                    </label>
+                    <textarea name="observaciones" 
+                              id="observaciones" 
+                              class="form-input" 
+                              placeholder="Observaciones adicionales..."
+                              maxlength="500">{{ pago.observaciones }}</textarea>
+                    <div class="helper-text">
+                        Información adicional sobre el pago
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'pagos_listar' %}" class="btn-cancel">
+                    Cancelar
+                </a>
+                <button type="submit" class="btn-submit" id="btnSubmit">
+                    <span class="btn-text">Guardar Cambios</span>
+                    <div class="loader"></div>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // MOSTRAR/OCULTAR CAMPO MEMBRESÍA
+    document.getElementById('tipo_pago').addEventListener('change', function() {
+        const membresiaGroup = document.getElementById('membresiaGroup');
+        if (this.value === 'membresia') {
+            membresiaGroup.style.display = 'block';
+        } else {
+            membresiaGroup.style.display = 'none';
+            document.getElementById('membresia').value = '';
+        }
+    });
+
+    // AUTOCOMPLETAR MONTO SEGÚN MEMBRESÍA
+    document.getElementById('membresia').addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        if (this.value) {
+            const texto = selectedOption.text;
+            const match = texto.match(/\$(\d+)/);
+            if (match) {
+                const precio = match[1].replace(/\./g, '');
+                document.getElementById('monto').value = precio;
+                actualizarMonto();
+            }
+        }
+    });
+
+    // VISTA PREVIA - MONTO
+    document.getElementById('monto').addEventListener('input', actualizarMonto);
+
+    function actualizarMonto() {
+        const valor = parseInt(document.getElementById('monto').value) || 0;
+        document.getElementById('previewMonto').textContent = '$' + valor.toLocaleString('es-CO');
+    }
+
+    // VISTA PREVIA - MÉTODO
+    document.getElementById('metodo_pago').addEventListener('change', function() {
+        const selectedText = this.options[this.selectedIndex].text;
+        document.getElementById('previewMetodo').textContent = selectedText;
+    });
+
+    // VISTA PREVIA - CONCEPTO
+    document.getElementById('concepto').addEventListener('input', function() {
+        document.getElementById('previewConcepto').textContent = this.value || '---';
+    });
+
+    // ANIMACIÓN AL ENVIAR
+    document.getElementById('editForm').addEventListener('submit', function(e) {
+        const btn = document.getElementById('btnSubmit');
+        btn.classList.add('loading');
+        btn.disabled = true;
+    });
+
+    // VALIDACIÓN VISUAL
+    const inputs = document.querySelectorAll('.form-input, .form-select');
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.checkValidity()) {
+                this.style.borderColor = 'var(--success-color)';
+            } else {
+                this.style.borderColor = '#e5e7eb';
+            }
+        });
+
+        input.addEventListener('change', function() {
+            if (this.checkValidity()) {
+                this.style.borderColor = 'var(--success-color)';
+            }
+        });
+    });
+
+    // FORMATO DE PRECIO AL PERDER FOCO
+    document.getElementById('monto').addEventListener('blur', function() {
+        const valor = parseInt(this.value) || 0;
+        const redondeado = Math.round(valor / 1000) * 1000;
+        this.value = redondeado;
+        actualizarMonto();
+    });
+</script>
+{% endblock %}

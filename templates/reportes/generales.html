@@ -1,0 +1,291 @@
+{% extends 'base.html' %}
+
+{% block title %}Reportes Generales - FITTECH{% endblock %}
+
+{% block content %}
+<style>
+    .reportes-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 0.5rem;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .reportes-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+    }
+
+    .stats-section {
+        margin-bottom: 2rem;
+    }
+
+    .stats-section h2 {
+        font-size: 1.5rem;
+        color: var(--dark-color);
+        margin-bottom: 1rem;
+        font-weight: 700;
+        padding-left: 1rem;
+        border-left: 4px solid var(--primary-color);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        box-shadow: var(--shadow);
+        transition: transform 0.3s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-card h3 {
+        font-size: 0.875rem;
+        color: var(--dark-color);
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+    }
+
+    .stat-card .number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+
+    .stat-card.success .number {
+        color: var(--success-color);
+    }
+
+    .stat-card.warning .number {
+        color: var(--warning-color);
+    }
+
+    .stat-card.danger .number {
+        color: var(--danger-color);
+    }
+
+    .export-section {
+        background: var(--light-color);
+        padding: 2rem;
+        border-radius: 0.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .export-buttons {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .export-btn {
+        padding: 1rem;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .export-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+</style>
+
+<div class="reportes-header">
+    <h1>📊 Centro de Reportes FITTECH</h1>
+    <p style="font-size: 1.125rem; font-weight: 600;">Sistema de Análisis y Estadísticas</p>
+</div>
+
+<!-- SECCIÓN MEMBRESÍAS -->
+<div class="stats-section">
+    <h2>💳 Membresías</h2>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Total de Membresías Activas</h3>
+            <div class="number">{{ total_membresias }}</div>
+        </div>
+        <div class="stat-card success">
+            <h3>Ingresos Potenciales</h3>
+            <div class="number">${{ membresias_stats.total_ingresos_potenciales|floatformat:0|default:"0" }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>Precio Promedio</h3>
+            <div class="number">${{ membresias_stats.precio_promedio|floatformat:0|default:"0" }}</div>
+        </div>
+    </div>
+    
+    {% if user.rol == 'administrador' %}
+    <div style="display: flex; gap: 1rem;">
+        <a href="{% url 'reportes_membresias_excel' %}" class="btn btn-success">📊 Exportar Excel</a>
+        <a href="{% url 'reportes_membresias_pdf' %}" class="btn btn-danger">📄 Exportar PDF</a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- SECCIÓN CLIENTES -->
+<div class="stats-section">
+    <h2>👥 Clientes</h2>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Total de Clientes</h3>
+            <div class="number">{{ total_clientes }}</div>
+        </div>
+        <div class="stat-card success">
+            <h3>Clientes Activos</h3>
+            <div class="number">{{ clientes_activos }}</div>
+        </div>
+        <div class="stat-card danger">
+            <h3>Clientes Inactivos</h3>
+            <div class="number">{{ clientes_inactivos }}</div>
+        </div>
+    </div>
+    
+    <div style="display: flex; gap: 1rem;">
+        <a href="{% url 'reportes_clientes_excel' %}" class="btn btn-success">📊 Exportar Excel</a>
+        <a href="{% url 'reportes_clientes_pdf' %}" class="btn btn-danger">📄 Exportar PDF</a>
+    </div>
+</div>
+
+<!-- SECCIÓN ASISTENCIAS -->
+<div class="stats-section">
+    <h2>✅ Asistencias</h2>
+    <div class="stats-grid">
+        <div class="stat-card warning">
+            <h3>Asistencias Hoy</h3>
+            <div class="number">{{ asistencias_hoy }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>Asistencias del Mes</h3>
+            <div class="number">{{ asistencias_mes }}</div>
+        </div>
+    </div>
+    
+    <div style="display: flex; gap: 1rem;">
+        <a href="{% url 'asistencias_exportar_excel' %}" class="btn btn-success">📊 Exportar Excel (Hoy)</a>
+        <a href="{% url 'asistencias_exportar_pdf' %}" class="btn btn-danger">📄 Exportar PDF (Hoy)</a>
+    </div>
+</div>
+
+<!-- SECCIÓN PAGOS -->
+<div class="stats-section">
+    <h2>💰 Pagos e Ingresos</h2>
+    <div class="stats-grid">
+        <div class="stat-card success">
+            <h3>Total Pagos Validados</h3>
+            <div class="number">{{ pagos_stats.total_pagos }}</div>
+        </div>
+        <div class="stat-card success">
+            <h3>Ingresos Totales</h3>
+            <div class="number">${{ pagos_stats.total_ingresos|floatformat:0 }}</div>
+        </div>
+        <div class="stat-card warning">
+            <h3>Pagos Pendientes</h3>
+            <div class="number">{{ pagos_stats.pagos_pendientes }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>Pagos Hoy</h3>
+            <div class="number">{{ pagos_stats.pagos_hoy }}</div>
+        </div>
+        <div class="stat-card success">
+            <h3>Ingresos Hoy</h3>
+            <div class="number">${{ pagos_stats.ingresos_hoy|floatformat:0 }}</div>
+        </div>
+        <div class="stat-card success">
+            <h3>Ingresos del Mes</h3>
+            <div class="number">${{ pagos_stats.ingresos_mes|floatformat:0 }}</div>
+        </div>
+    </div>
+    
+    <div style="display: flex; gap: 1rem;">
+        <a href="{% url 'pagos_reportes' %}" class="btn btn-primary">📊 Ver Reportes Detallados</a>
+        <a href="{% url 'pagos_exportar_excel' %}" class="btn btn-success">📊 Exportar Excel</a>
+        <a href="{% url 'pagos_exportar_pdf' %}" class="btn btn-danger">📄 Exportar PDF</a>
+    </div>
+</div>
+
+<!-- SECCIÓN USUARIOS -->
+{% if user.rol == 'administrador' %}
+<div class="stats-section">
+    <h2>👤 Usuarios del Sistema</h2>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Total de Usuarios</h3>
+            <div class="number">{{ total_usuarios }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>Administradores</h3>
+            <div class="number">{{ usuarios_admin }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>Empleados</h3>
+            <div class="number">{{ usuarios_empleados }}</div>
+        </div>
+    </div>
+    
+    <div style="display: flex; gap: 1rem;">
+        <a href="{% url 'reportes_usuarios_excel' %}" class="btn btn-success">📊 Exportar Excel</a>
+        <a href="{% url 'reportes_usuarios_pdf' %}" class="btn btn-danger">📄 Exportar PDF</a>
+    </div>
+</div>
+{% endif %}
+
+<!-- REPORTE CONSOLIDADO -->
+{% if user.rol == 'administrador' %}
+<div class="export-section">
+    <h2 style="font-size: 1.5rem; color: var(--dark-color); margin-bottom: 1rem; font-weight: 700;">📋 Reporte Consolidado</h2>
+    <p style="font-size: 1rem; margin-bottom: 1rem; font-weight: 600;">Descargue un reporte completo con todas las estadísticas del sistema en un solo archivo Excel con múltiples hojas.</p>
+    
+    <a href="{% url 'reporte_consolidado_excel' %}" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.125rem;">
+        📊 Descargar Reporte Consolidado Excel
+    </a>
+</div>
+{% endif %}
+
+<!-- PAGOS POR MÉTODO -->
+<div class="card" style="background: var(--light-color);">
+    <h2 style="font-size: 1.5rem; color: var(--dark-color); margin-bottom: 1rem; font-weight: 700;">💳 Distribución de Pagos por Método</h2>
+    
+    {% if pagos_stats.pagos_por_metodo %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Método de Pago</th>
+                <th>Cantidad de Pagos</th>
+                <th>Total Recaudado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for metodo in pagos_stats.pagos_por_metodo %}
+            <tr>
+                <td><strong>{{ metodo.metodo_pago|title }}</strong></td>
+                <td>{{ metodo.total }}</td>
+                <td style="color: var(--success-color); font-weight: bold;">${{ metodo.monto_total|floatformat:0 }} COP</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="text-align: center; padding: 2rem; font-weight: 600;">No hay datos de pagos disponibles</p>
+    {% endif %}
+</div>
+{% endblock %}

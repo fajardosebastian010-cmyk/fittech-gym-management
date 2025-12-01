@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestión de Bonos - FITTECH{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>🎁 Gestión de Bonos y Regalos</h1>
+    <div style="display: flex; gap: 1rem;">
+        <a href="{% url 'bonos_crear' %}" class="btn btn-primary">+ Nuevo Bono</a>
+        <a href="{% url 'bonos_estadisticas' %}" class="btn btn-info">📊 Estadísticas</a>
+    </div>
+</div>
+
+<!-- FILTROS -->
+<div class="card" style="margin-bottom: 2rem;">
+    <form method="GET" style="display: flex; gap: 1rem;">
+        <select name="estado" class="input" onchange="this.form.submit()">
+            <option value="todos" {% if filtro_estado == 'todos' %}selected{% endif %}>Todos los bonos</option>
+            <option value="pendientes" {% if filtro_estado == 'pendientes' %}selected{% endif %}>Pendientes de aplicar</option>
+            <option value="aplicados" {% if filtro_estado == 'aplicados' %}selected{% endif %}>Aplicados</option>
+        </select>
+    </form>
+</div>
+
+{% if bonos %}
+<div class="card">
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Tipo de Bono</th>
+                    <th>Días Regalo</th>
+                    <th>Motivo</th>
+                    <th>Fecha Otorgado</th>
+                    <th>Usuario</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for bono in bonos %}
+                <tr>
+                    <td><strong>#{{ bono.id }}</strong></td>
+                    <td>{{ bono.cliente.nombres }} {{ bono.cliente.apellidos }}</td>
+                    <td>{{ bono.get_tipo_bono_display }}</td>
+                    <td><strong style="color: var(--success-color);">+{{ bono.dias_regalo }} días</strong></td>
+                    <td>{{ bono.motivo }}</td>
+                    <td>{{ bono.fecha_otorgado|date:"d/m/Y H:i" }}</td>
+                    <td>{{ bono.usuario_otorgo.nombre|default:"Sistema" }}</td>
+                    <td>
+                        {% if bono.aplicado %}
+                            <span class="badge badge-success">✓ Aplicado</span><br>
+                            <small>{{ bono.fecha_aplicado|date:"d/m/Y" }}</small>
+                        {% else %}
+                            <span class="badge badge-warning">⏳ Pendiente</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            {% if not bono.aplicado %}
+                                <a href="{% url 'bonos_aplicar' bono.id %}" class="btn btn-sm btn-success">✓ Aplicar</a>
+                                <a href="{% url 'bonos_eliminar' bono.id %}" class="btn btn-sm btn-danger" 
+                                   onclick="return confirm('¿Eliminar este bono?')">Eliminar</a>
+                            {% else %}
+                                <span style="color: #9ca3af;">Ya aplicado</span>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div style="margin-top: 1rem; text-align: center; color: #6b7280;">
+    <p>Total de bonos: <strong>{{ total_bonos }}</strong></p>
+</div>
+
+{% else %}
+<div class="card" style="text-align: center; padding: 3rem;">
+    <p style="font-size: 3rem;">🎁</p>
+    <h2>No hay bonos registrados</h2>
+    <p style="color: #6b7280; margin: 1rem 0;">Comienza otorgando bonos a tus clientes</p>
+    <a href="{% url 'bonos_crear' %}" class="btn btn-primary">+ Crear Primer Bono</a>
+</div>
+{% endif %}
+{% endblock %}

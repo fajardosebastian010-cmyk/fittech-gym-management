@@ -1,0 +1,302 @@
+{% extends 'base.html' %}
+
+{% block title %}Renovar Membresía - FITTECH{% endblock %}
+
+{% block extra_css %}
+<style>
+.renovar-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.info-cliente-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 2rem;
+}
+
+.info-cliente-card h2 {
+    font-size: 1.4rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    padding-left: 0.5rem;
+    border-left: 4px solid var(--primary-color);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.info-item {
+    padding: 0.75rem 0;
+}
+
+.info-item strong {
+    display: block;
+    color: #6b7280;
+    font-size: 0.875rem;
+    margin-bottom: 0.3rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-item span {
+    display: block;
+    color: var(--dark-color);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.divider {
+    margin: 1.5rem 0;
+    border: none;
+    border-top: 2px solid #f3f4f6;
+}
+
+.form-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.form-card h2 {
+    font-size: 1.4rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    padding-left: 0.5rem;
+    border-left: 4px solid var(--primary-color);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+    color: var(--dark-color);
+    font-size: 0.95rem;
+}
+
+.form-group .input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s;
+    background: white;
+}
+
+.form-group .input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.form-group small {
+    display: block;
+    margin-top: 0.5rem;
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.alert-warning {
+    background: #fef3c7;
+    color: #92400e;
+    border-left: 4px solid var(--warning-color);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+    line-height: 1.7;
+}
+
+.alert-warning strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #f3f4f6;
+}
+
+.badge-estado {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.badge-activo {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.badge-inactivo {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.fecha-vencida {
+    color: var(--danger-color);
+    font-weight: 700;
+}
+
+.fecha-vigente {
+    color: var(--success-color);
+    font-weight: 700;
+}
+
+@media (max-width: 768px) {
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="renovar-container">
+    <div class="page-header">
+        <h1>🔄 Renovar Membresía</h1>
+        <a href="{% url 'clientes_ver' cliente.documento %}" class="btn btn-secondary">← Volver</a>
+    </div>
+
+    <div class="info-cliente-card">
+        <h2>📋 Información del Cliente</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <strong>Documento</strong>
+                <span>{{ cliente.documento }}</span>
+            </div>
+            <div class="info-item">
+                <strong>Nombre Completo</strong>
+                <span>{{ cliente.nombres }} {{ cliente.apellidos }}</span>
+            </div>
+            <div class="info-item">
+                <strong>Email</strong>
+                <span>{{ cliente.email }}</span>
+            </div>
+            <div class="info-item">
+                <strong>Celular</strong>
+                <span>{{ cliente.celular }}</span>
+            </div>
+        </div>
+        
+        <hr class="divider">
+        
+        <div class="info-grid">
+            <div class="info-item">
+                <strong>Membresía Actual</strong>
+                <span>
+                    {% if cliente.membresia_actual %}
+                        {{ cliente.membresia_actual.nombre }}
+                    {% else %}
+                        <span style="color: #9ca3af;">Sin membresía</span>
+                    {% endif %}
+                </span>
+            </div>
+            <div class="info-item">
+                <strong>Fecha Inicio</strong>
+                <span>
+                    {% if cliente.fecha_inicio_membresia %}
+                        {{ cliente.fecha_inicio_membresia|date:"d/m/Y" }}
+                    {% else %}
+                        <span style="color: #9ca3af;">N/A</span>
+                    {% endif %}
+                </span>
+            </div>
+            <div class="info-item">
+                <strong>Fecha Vencimiento</strong>
+                <span>
+                    {% if cliente.fecha_fin_membresia %}
+                        {% now "Y-m-d" as hoy %}
+                        <span class="{% if cliente.fecha_fin_membresia|date:'Y-m-d' < hoy %}fecha-vencida{% else %}fecha-vigente{% endif %}">
+                            {{ cliente.fecha_fin_membresia|date:"d/m/Y" }}
+                        </span>
+                    {% else %}
+                        <span style="color: #9ca3af;">N/A</span>
+                    {% endif %}
+                </span>
+            </div>
+            <div class="info-item">
+                <strong>Estado</strong>
+                <span>
+                    {% if cliente.estado == 'activo' %}
+                        <span class="badge-estado badge-activo">✓ Activo</span>
+                    {% else %}
+                        <span class="badge-estado badge-inactivo">✗ Inactivo</span>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-card">
+        <h2>💳 Datos de Renovación</h2>
+        
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="membresia">Nueva Membresía *</label>
+                <select name="membresia" id="membresia" class="input" required>
+                    <option value="">Seleccione una membresía</option>
+                    {% for membresia in membresias %}
+                    <option value="{{ membresia.id }}" {% if cliente.membresia_actual and membresia.id == cliente.membresia_actual.id %}selected{% endif %}>
+                        {{ membresia.nombre }} - {{ membresia.duracion_dias }} días - ${{ membresia.precio|floatformat:0 }} COP
+                    </option>
+                    {% endfor %}
+                </select>
+                <small>Selecciona la membresía para renovar. La fecha de inicio será desde hoy.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="bono_dias">🎁 Regalo de Renovación (Opcional - Máximo 3 días)</label>
+                <select name="bono_dias" id="bono_dias" class="input">
+                    <option value="0">Sin regalo</option>
+                    <option value="1">+ 1 Día Extra</option>
+                    <option value="2">+ 2 Días Extra</option>
+                    <option value="3">+ 3 Días Extra</option>
+                </select>
+                <small>Los días de regalo se suman a la membresía pero no afectan los ingresos.</small>
+            </div>
+
+            <div class="alert-warning">
+                <strong>⚠ Importante:</strong>
+                • La renovación comenzará desde hoy<br>
+                • Se enviará un email de confirmación al cliente<br>
+                • El estado del cliente cambiará a "Activo"<br>
+                • La membresía anterior se desactivará automáticamente
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">✓ Renovar Membresía</button>
+                <a href="{% url 'clientes_ver' cliente.documento %}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+
+{% block title %}Crear Bono - FITTECH{% endblock %}
+
+{% block extra_css %}
+<style>
+.crear-bono-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.form-card {
+    background: white;
+    border-radius: 14px;
+    padding: 2.5rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.info-banner {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-left: 4px solid var(--warning-color);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+.info-banner h3 {
+    color: #92400e;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.info-banner p {
+    color: #92400e;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+    color: var(--dark-color);
+    font-size: 0.95rem;
+}
+
+.form-group .input,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s;
+    background: white;
+}
+
+.form-group .input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.form-group small {
+    display: block;
+    margin-top: 0.5rem;
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 8px;
+    border: 2px solid #e5e7eb;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--primary-color);
+}
+
+.checkbox-group span {
+    font-weight: 600;
+    color: var(--dark-color);
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #f3f4f6;
+}
+
+.gift-icon {
+    font-size: 1.2rem;
+    margin-right: 0.3rem;
+}
+
+@media (max-width: 768px) {
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+    }
+    
+    .form-card {
+        padding: 1.5rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="crear-bono-container">
+    <div class="page-header">
+        <h1>🎁 Crear Nuevo Bono/Regalo</h1>
+        <a href="{% url 'bonos_listar' %}" class="btn btn-secondary">← Volver</a>
+    </div>
+
+    <div class="info-banner">
+        <h3>ℹ️ Información sobre Bonos</h3>
+        <p>Los bonos son días extra que se suman a la membresía del cliente. Puedes otorgar entre 1 y 3 días adicionales. Estos días NO afectan los ingresos registrados y se pueden aplicar inmediatamente o dejar pendientes.</p>
+    </div>
+
+    <div class="form-card">
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="cliente">Cliente *</label>
+                <select name="cliente" id="cliente" class="input" required>
+                    <option value="">Seleccione un cliente</option>
+                    {% for cliente in clientes %}
+                    <option value="{{ cliente.documento }}">
+                        {{ cliente.documento }} - {{ cliente.nombres }} {{ cliente.apellidos }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <small>Selecciona el cliente que recibirá el bono</small>
+            </div>
+
+            <div class="form-group">
+                <label for="tipo_bono">Tipo de Bono * (Máximo 3 días)</label>
+                <select name="tipo_bono" id="tipo_bono" class="input" required>
+                    <option value="">Seleccione tipo de bono</option>
+                    <option value="1_dia"><span class="gift-icon">🎁</span> 1 Día Extra</option>
+                    <option value="2_dias"><span class="gift-icon">🎁</span> 2 Días Extra</option>
+                    <option value="3_dias"><span class="gift-icon">🎁</span> 3 Días Extra</option>
+                </select>
+                <small>Los días se sumarán automáticamente a la fecha de vencimiento de la membresía</small>
+            </div>
+
+            <div class="form-group">
+                <label for="motivo">Motivo del Bono *</label>
+                <input type="text" name="motivo" id="motivo" class="input" 
+                       placeholder="Ej: Cliente referido, Promoción especial, Regalo de cumpleaños" 
+                       required maxlength="200">
+                <small>Describe brevemente el motivo del bono (máximo 200 caracteres)</small>
+            </div>
+
+            <div class="form-group">
+                <div class="checkbox-group">
+                    <input type="checkbox" name="aplicar_ahora" id="aplicar_ahora" value="1" checked>
+                    <label for="aplicar_ahora" style="margin: 0; cursor: pointer;">
+                        <span>✓ Aplicar bono inmediatamente</span>
+                    </label>
+                </div>
+                <small>Si no se marca, el bono quedará pendiente para aplicar después desde el listado de bonos</small>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">🎁 Crear Bono</button>
+                <a href="{% url 'bonos_listar' %}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

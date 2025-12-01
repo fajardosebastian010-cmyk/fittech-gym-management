@@ -1,0 +1,584 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Cliente - FITTECH{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* CONTENEDOR PRINCIPAL */
+    .form-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        animation: slideUp 0.5s ease-out;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* HEADER DEL FORMULARIO */
+    .form-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 3px solid #f3f4f6;
+    }
+
+    .form-header h2 {
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+    }
+
+    .form-header p {
+        color: #6b7280;
+        font-size: 1rem;
+    }
+
+    /* VISTA PREVIA DEL CLIENTE */
+    .preview-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2rem;
+        border-radius: 15px;
+        color: white;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    .preview-header {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .preview-avatar {
+        width: 100px;
+        height: 100px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        font-weight: 700;
+        backdrop-filter: blur(10px);
+        border: 4px solid rgba(255, 255, 255, 0.5);
+        text-transform: uppercase;
+    }
+
+    .preview-info {
+        flex: 1;
+    }
+
+    .preview-info h3 {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+    }
+
+    .preview-info p {
+        opacity: 0.9;
+        font-size: 1rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .preview-content {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 1.5rem;
+        border-radius: 10px;
+        backdrop-filter: blur(10px);
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .preview-content {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .preview-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+
+    .preview-label {
+        opacity: 0.8;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .preview-value {
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    /* SECCIONES DEL FORMULARIO */
+    .form-section {
+        margin-bottom: 2.5rem;
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid #e5e7eb;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* GRUPOS DE FORMULARIO */
+    .form-group {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.6rem;
+        font-weight: 600;
+        color: var(--dark-color);
+        font-size: 0.95rem;
+    }
+
+    /* INPUTS */
+    .form-input {
+        width: 100%;
+        padding: 0.9rem 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f9fafb;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .form-input:valid {
+        border-color: var(--success-color);
+    }
+
+    /* GRID RESPONSIVO */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* HELPER TEXT */
+    .helper-text {
+        margin-top: 0.4rem;
+        font-size: 0.85rem;
+        color: #6b7280;
+    }
+
+    /* BOTONES */
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2.5rem;
+        padding-top: 2rem;
+        border-top: 2px solid #f3f4f6;
+    }
+
+    .btn-submit {
+        flex: 1;
+        padding: 1rem 2rem;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-submit::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transition: left 0.5s ease;
+    }
+
+    .btn-submit:hover::before {
+        left: 100%;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-cancel {
+        padding: 1rem 2rem;
+        background: #f3f4f6;
+        color: #374151;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-cancel:hover {
+        background: #e5e7eb;
+        border-color: #d1d5db;
+        transform: translateY(-2px);
+    }
+
+    /* LOADER */
+    .loader {
+        display: none;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-top: 3px solid white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .btn-submit.loading .loader {
+        display: inline-block;
+    }
+
+    .btn-submit.loading .btn-text {
+        display: none;
+    }
+
+    /* REQUIRED */
+    .required {
+        color: var(--danger-color);
+        margin-left: 0.2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Editar Cliente</h1>
+    <a href="{% url 'clientes_ver' cliente.documento %}" class="btn btn-secondary">← Volver</a>
+</div>
+
+<div class="form-container">
+    <!-- VISTA PREVIA -->
+    <div class="preview-card">
+        <div class="preview-header">
+            <div class="preview-avatar" id="previewAvatar">
+                {{ cliente.nombres.0 }}{{ cliente.apellidos.0 }}
+            </div>
+            <div class="preview-info">
+                <h3 id="previewNombre">{{ cliente.nombres }} {{ cliente.apellidos }}</h3>
+                <p id="previewEmail">{{ cliente.email }}</p>
+            </div>
+        </div>
+        <div class="preview-content">
+            <div class="preview-item">
+                <span class="preview-label">Celular</span>
+                <span class="preview-value" id="previewCelular">{{ cliente.celular }}</span>
+            </div>
+            <div class="preview-item">
+                <span class="preview-label">Peso</span>
+                <span class="preview-value" id="previewPeso">{{ cliente.peso }} kg</span>
+            </div>
+            <div class="preview-item">
+                <span class="preview-label">Fecha Nacimiento</span>
+                <span class="preview-value" id="previewFecha">{{ cliente.fecha_nacimiento|date:"d/m/Y" }}</span>
+            </div>
+            <div class="preview-item">
+                <span class="preview-label">Documento</span>
+                <span class="preview-value">{{ cliente.documento }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- FORMULARIO -->
+    <div class="form-card">
+        <div class="form-header">
+            <h2>Actualizar Información del Cliente</h2>
+            <p>Modifica los datos de {{ cliente.nombres }}</p>
+        </div>
+
+        <form method="POST" id="editForm">
+            {% csrf_token %}
+            
+            <!-- SECCIÓN: INFORMACIÓN PERSONAL -->
+            <div class="form-section">
+                <div class="section-title">
+                    Información Personal
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="nombres">
+                            Nombres <span class="required">*</span>
+                        </label>
+                        <input type="text" 
+                               name="nombres" 
+                               id="nombres" 
+                               class="form-input" 
+                               value="{{ cliente.nombres }}"
+                               placeholder="Ej: Juan Carlos"
+                               required
+                               maxlength="100">
+                        <div class="helper-text">
+                            Nombre(s) del cliente
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="apellidos">
+                            Apellidos <span class="required">*</span>
+                        </label>
+                        <input type="text" 
+                               name="apellidos" 
+                               id="apellidos" 
+                               class="form-input" 
+                               value="{{ cliente.apellidos }}"
+                               placeholder="Ej: García Pérez"
+                               required
+                               maxlength="100">
+                        <div class="helper-text">
+                            Apellido(s) del cliente
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="peso">
+                            Peso (kg) <span class="required">*</span>
+                        </label>
+                        <input type="number" 
+                               name="peso" 
+                               id="peso" 
+                               class="form-input" 
+                               value="{{ cliente.peso }}"
+                               placeholder="75.5"
+                               required
+                               step="0.1"
+                               min="30"
+                               max="300">
+                        <div class="helper-text">
+                            Peso actual en kilogramos
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fecha_nacimiento">
+                            Fecha de Nacimiento <span class="required">*</span>
+                        </label>
+                        <input type="date" 
+                               name="fecha_nacimiento" 
+                               id="fecha_nacimiento" 
+                               class="form-input" 
+                               value="{{ cliente.fecha_nacimiento|date:'Y-m-d' }}"
+                               required>
+                        <div class="helper-text">
+                            Fecha en formato DD/MM/AAAA
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECCIÓN: INFORMACIÓN DE CONTACTO -->
+            <div class="form-section">
+                <div class="section-title">
+                    Información de Contacto
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="email">
+                            Email <span class="required">*</span>
+                        </label>
+                        <input type="email" 
+                               name="email" 
+                               id="email" 
+                               class="form-input" 
+                               value="{{ cliente.email }}"
+                               placeholder="ejemplo@correo.com"
+                               required>
+                        <div class="helper-text">
+                            Correo electrónico válido
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="celular">
+                            Celular <span class="required">*</span>
+                        </label>
+                        <input type="text" 
+                               name="celular" 
+                               id="celular" 
+                               class="form-input" 
+                               value="{{ cliente.celular }}"
+                               placeholder="3001234567"
+                               required
+                               maxlength="15"
+                               pattern="[0-9]{10,15}">
+                        <div class="helper-text">
+                            Número celular sin espacios
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'clientes_ver' cliente.documento %}" class="btn-cancel">
+                    Cancelar
+                </a>
+                <button type="submit" class="btn-submit" id="btnSubmit">
+                    <span class="btn-text">Guardar Cambios</span>
+                    <div class="loader"></div>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // VISTA PREVIA EN TIEMPO REAL
+    document.getElementById('nombres').addEventListener('input', function(e) {
+        actualizarNombreCompleto();
+        actualizarAvatar();
+    });
+
+    document.getElementById('apellidos').addEventListener('input', function(e) {
+        actualizarNombreCompleto();
+        actualizarAvatar();
+    });
+
+    function actualizarNombreCompleto() {
+        const nombres = document.getElementById('nombres').value || 'Nombres';
+        const apellidos = document.getElementById('apellidos').value || 'Apellidos';
+        document.getElementById('previewNombre').textContent = `${nombres} ${apellidos}`;
+    }
+
+    function actualizarAvatar() {
+        const nombres = document.getElementById('nombres').value.trim();
+        const apellidos = document.getElementById('apellidos').value.trim();
+        let iniciales = '';
+        if (nombres) iniciales += nombres[0];
+        if (apellidos) iniciales += apellidos[0];
+        document.getElementById('previewAvatar').textContent = iniciales.toUpperCase() || 'CL';
+    }
+
+    document.getElementById('email').addEventListener('input', function(e) {
+        document.getElementById('previewEmail').textContent = e.target.value || 'email@ejemplo.com';
+    });
+
+    document.getElementById('celular').addEventListener('input', function(e) {
+        document.getElementById('previewCelular').textContent = e.target.value || '---';
+    });
+
+    document.getElementById('peso').addEventListener('input', function(e) {
+        document.getElementById('previewPeso').textContent = e.target.value ? e.target.value + ' kg' : '--- kg';
+    });
+
+    document.getElementById('fecha_nacimiento').addEventListener('change', function(e) {
+        if (e.target.value) {
+            const fecha = new Date(e.target.value + 'T00:00:00');
+            const dia = fecha.getDate().toString().padStart(2, '0');
+            const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+            const año = fecha.getFullYear();
+            document.getElementById('previewFecha').textContent = `${dia}/${mes}/${año}`;
+        }
+    });
+
+    // ANIMACIÓN AL ENVIAR
+    document.getElementById('editForm').addEventListener('submit', function(e) {
+        const btn = document.getElementById('btnSubmit');
+        btn.classList.add('loading');
+        btn.disabled = true;
+    });
+
+    // VALIDACIÓN EN TIEMPO REAL
+    const inputs = document.querySelectorAll('.form-input');
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.checkValidity()) {
+                this.style.borderColor = 'var(--success-color)';
+            } else {
+                this.style.borderColor = '#e5e7eb';
+            }
+        });
+
+        // ANIMACIÓN AL HACER FOCUS
+        input.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'scale(1.01)';
+        });
+        
+        input.addEventListener('blur', function() {
+            this.parentElement.style.transform = 'scale(1)';
+        });
+    });
+
+    // VALIDACIÓN DE CELULAR (solo números)
+    document.getElementById('celular').addEventListener('input', function(e) {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+
+    // AUTO-FOCUS EN EL PRIMER CAMPO
+    window.addEventListener('load', function() {
+        document.getElementById('nombres').focus();
+    });
+</script>
+{% endblock %}

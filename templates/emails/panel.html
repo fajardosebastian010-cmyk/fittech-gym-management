@@ -1,0 +1,316 @@
+{% extends 'base.html' %}
+
+{% block title %}Panel de Emails - FITTECH{% endblock %}
+
+{% block extra_css %}
+<style>
+.card-email-panel {
+    background: #fff;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 18px -10px #6c63ff44;
+    margin-bottom: 2rem;
+}
+
+.card-email-panel h2 {
+    font-size: 1.6rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+}
+
+.resumen-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.resumen-item {
+    padding: 1.5rem;
+    border-radius: 0.6rem;
+    border-left: 4px solid;
+}
+
+.resumen-item.info {
+    background: #dbeafe;
+    border-left-color: var(--info-color);
+}
+
+.resumen-item.warning {
+    background: #fef3c7;
+    border-left-color: var(--warning-color);
+}
+
+.resumen-item.danger {
+    background: #fee2e2;
+    border-left-color: #dc2626;
+}
+
+.resumen-item p.label {
+    font-weight: 600;
+    color: #6b7280;
+    margin-bottom: 0.3rem;
+}
+
+.resumen-item p.value {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+}
+
+.resumen-item.info p.value {
+    color: var(--info-color);
+}
+
+.resumen-item.warning p.value {
+    color: var(--warning-color);
+}
+
+.resumen-item.danger p.value {
+    color: #dc2626;
+}
+
+.resumen-item p.desc {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 0.5rem;
+}
+
+.acciones-rapidas {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-accion {
+    flex: 1;
+    min-width: 250px;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.btn-accion.primario {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-accion.primario:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-accion.peligro {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+}
+
+.btn-accion.peligro:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.envio-masivo-box {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: #f9fafb;
+    border-radius: 0.6rem;
+    box-shadow: 0 2px 9px -7px #bdb7e0;
+}
+
+.envio-masivo-box h3 {
+    margin-bottom: 1rem;
+    color: var(--dark-color);
+    font-weight: 700;
+}
+
+.envio-masivo-box p {
+    margin-bottom: 1rem;
+    color: #6b7280;
+}
+
+.table-email {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px 0 #e4e2fa;
+}
+
+.table-email thead {
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.table-email th,
+.table-email td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.table-email tr:hover td {
+    background: #f6f7fb;
+}
+
+.dias-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    font-weight: 700;
+    display: inline-block;
+}
+
+.dias-badge.urgente {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.dias-badge.advertencia {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.dias-badge.normal {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.info-sistema-box {
+    background: #f9fafb;
+    padding: 1.5rem;
+    border-radius: 0.6rem;
+}
+
+.info-sistema-box h2 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.info-sistema-box ul {
+    list-style: none;
+    padding: 0;
+}
+
+.info-sistema-box li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.info-sistema-box li:last-child {
+    border-bottom: none;
+}
+
+.empty-message {
+    text-align: center;
+    padding: 2rem;
+    font-weight: 600;
+    color: var(--success-color);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>📧 Panel de Gestión de Emails</h1>
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary">← Volver al Dashboard</a>
+</div>
+
+<div class="card-email-panel">
+    <h2>📊 Resumen de Notificaciones</h2>
+    <div class="resumen-cards">
+        <div class="resumen-item info">
+            <p class="label">Clientes por Vencer</p>
+            <p class="value">{{ total_por_vencer }}</p>
+            <p class="desc">En los próximos {{ dias_aviso }} días</p>
+        </div>
+        <div class="resumen-item warning">
+            <p class="label">Días de Aviso</p>
+            <p class="value">{{ dias_aviso }}</p>
+            <p class="desc">Configurado en sistema</p>
+        </div>
+        <div class="resumen-item danger">
+            <p class="label">Clientes Inactivos</p>
+            <p class="value">{{ total_inactivos }}</p>
+            <p class="desc">Con email registrado</p>
+        </div>
+    </div>
+
+    <h3 style="margin-bottom: 1rem; color: var(--dark-color); font-weight: 700;">⚡ Acciones Rápidas</h3>
+    <div class="acciones-rapidas">
+        {% if total_por_vencer > 0 %}
+        <form method="POST" action="{% url 'enviar_emails_vencimiento' %}" style="flex: 1; min-width: 250px;">
+            {% csrf_token %}
+            <button type="submit" class="btn-accion primario" style="width: 100%; border: none; cursor: pointer;"
+                    onclick="return confirm('¿Enviar emails de vencimiento a {{ total_por_vencer }} cliente(s)?')">
+                📧 Enviar Emails Vencimiento ({{ total_por_vencer }})
+            </button>
+        </form>
+        {% endif %}
+        
+        <a href="{% url 'emails_clientes_inactivos' %}" class="btn-accion peligro">
+            📨 Correos a Clientes Inactivos ({{ total_inactivos }})
+        </a>
+    </div>
+</div>
+
+<div class="card-email-panel">
+    <h2>👥 Clientes con Membresías por Vencer</h2>
+    {% if clientes_por_vencer_lista %}
+    <div style="overflow-x:auto;">
+        <table class="table-email">
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Email</th>
+                    <th>Membresía</th>
+                    <th>Vencimiento</th>
+                    <th>Días Restantes</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cliente in clientes_por_vencer_lista %}
+                <tr>
+                    <td><strong>{{ cliente.nombres }} {{ cliente.apellidos }}</strong></td>
+                    <td>{{ cliente.email }}</td>
+                    <td>{{ cliente.membresia_actual.nombre }}</td>
+                    <td>{{ cliente.fecha_fin_membresia|date:"d/m/Y" }}</td>
+                    <td>
+                        {% with dias=cliente.dias_para_vencer %}
+                        <span class="dias-badge {% if dias <= 3 %}urgente{% elif dias <= 7 %}advertencia{% else %}normal{% endif %}">
+                            {{ dias }} día{% if dias != 1 %}s{% endif %}
+                        </span>
+                        {% endwith %}
+                    </td>
+                    <td>
+                        <a href="{% url 'enviar_email_vencimiento_individual' cliente.documento %}"
+                           class="btn btn-warning btn-sm"
+                           onclick="return confirm('¿Enviar email de vencimiento a {{ cliente.nombres }}?')">
+                            📧 Enviar Email
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="empty-message">✓ No hay clientes con membresías por vencer</p>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// El JavaScript ya no es necesario porque usamos onclick en el botón
+</script>
+{% endblock %}
