@@ -411,7 +411,7 @@
 
     <div class="actions-section">
         <a href="{% url 'clientes_editar' cliente.documento %}" class="btn btn-success">✏️ Editar Cliente</a>
-        <a href="{% url 'clientes_renovar' cliente.documento %}" class="btn btn-primary">🔄 Renovar Membresía</a>
+        <a href="{% url 'pagos_registrar' cliente.documento %}" class="btn btn-primary">🔄 Renovar Membresía</a>
         <a href="{% url 'cliente_asistencias' cliente.documento %}" class="btn btn-info">📊 Ver Asistencias</a>
         <a href="{% url 'clientes_listar' %}" class="btn btn-secondary">← Volver a Lista</a>
     </div>
