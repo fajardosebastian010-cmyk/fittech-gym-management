@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 
+
 {% block title %}Registrar Cliente - FITTECH{% endblock %}
+
 
 {% block extra_css %}
 <style>
@@ -95,6 +97,7 @@
 </style>
 {% endblock %}
 
+
 {% block content %}
 <div class="crear-cliente-container">
     <div class="page-header">
@@ -120,8 +123,19 @@
                 </div>
                 <div class="form-group">
                     <label for="documento">Número de Documento *</label>
-                    <input type="text" name="documento" id="documento" class="input" required 
-                        placeholder="Ej: 1003456789" pattern="[0-9]+" title="Solo números">
+                    <input
+                        type="text"
+                        name="documento"
+                        id="documento"
+                        class="input"
+                        required
+                        placeholder="Ej: 1003456789"
+                        inputmode="numeric"
+                        pattern="[0-9]*"
+                        maxlength="15"
+                        oninput="this.value = this.value.replace(/[^0-9]/g,'');"
+                        title="Solo números"
+                    >
                 </div>
             </div>
             
@@ -160,8 +174,18 @@
                 </div>
                 <div class="form-group">
                     <label for="celular">Celular</label>
-                    <input type="text" name="celular" id="celular" class="input"
-                        placeholder="Ej: 3001234567" pattern="[0-9]{10}" title="Ingrese 10 dígitos">
+                    <input
+                        type="text"
+                        name="celular"
+                        id="celular"
+                        class="input"
+                        placeholder="Ej: 3001234567"
+                        inputmode="numeric"
+                        pattern="[0-9]{10}"
+                        maxlength="10"
+                        oninput="this.value = this.value.replace(/[^0-9]/g,'');"
+                        title="Ingrese 10 dígitos"
+                    >
                     <small>Opcional</small>
                 </div>
             </div>
@@ -230,4 +254,3 @@
     </div>
 </div>
 {% endblock %}
-
