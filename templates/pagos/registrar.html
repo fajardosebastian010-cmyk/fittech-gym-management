@@ -1,12 +1,15 @@
 {% extends 'base.html' %}
 
+
 {% block title %}Registrar Pago - FITTECH{% endblock %}
+
 
 {% block content %}
 <div class="page-header">
     <h1>Registrar Pago de Membresía</h1>
     <a href="{% url 'clientes_listar' %}" class="btn btn-secondary">Volver</a>
 </div>
+
 
 <div class="card">
     <div class="cliente-info">
@@ -24,6 +27,7 @@
         {% endif %}
     </div>
 </div>
+
 
 <div class="card">
     <h3 style="margin-bottom: 1.5rem; color: #6366f1;">Seleccionar Membresía</h3>
@@ -132,6 +136,7 @@
         </div>
     </form>
 </div>
+
 
 <style>
     .page-header {
@@ -380,49 +385,23 @@
     }
 </style>
 
-<script>
-// MÉTODO 1: Con evento onclick directo
-function seleccionarMembresia(precio, nombre) {
-    document.getElementById('monto').value = precio;
-    document.getElementById('concepto').value = 'Pago de membresía ' + nombre;
-}
 
-// MÉTODO 2: Con addEventListener
+<script>
+// ✅ Autocompletar monto cuando se selecciona una membresía
 document.addEventListener('DOMContentLoaded', function() {
-    var radios = document.querySelectorAll('.radio-membresia');
+    const radios = document.querySelectorAll('.radio-membresia');
+    const montoInput = document.getElementById('monto');
+    const conceptoInput = document.getElementById('concepto');
     
     radios.forEach(function(radio) {
         radio.addEventListener('change', function() {
-            var precio = this.getAttribute('data-precio');
-            var nombre = this.getAttribute('data-nombre');
+            const precio = Math.round(parseFloat(this.getAttribute('data-precio')));
+            const nombre = this.getAttribute('data-nombre');
             
-            document.getElementById('monto').value = precio;
-            document.getElementById('concepto').value = 'Pago de membresía ' + nombre;
-        });
-        
-        radio.addEventListener('click', function() {
-            var precio = this.getAttribute('data-precio');
-            var nombre = this.getAttribute('data-nombre');
-            
-            document.getElementById('monto').value = precio;
-            document.getElementById('concepto').value = 'Pago de membresía ' + nombre;
+            montoInput.value = precio;
+            conceptoInput.value = 'Pago de membresía ' + nombre;
         });
     });
 });
-
-// MÉTODO 3: Con window.onload
-window.onload = function() {
-    var radios = document.getElementsByName('membresia_id');
-    
-    for (var i = 0; i < radios.length; i++) {
-        radios[i].onclick = function() {
-            var precio = this.getAttribute('data-precio');
-            var nombre = this.getAttribute('data-nombre');
-            
-            document.getElementById('monto').value = precio;
-            document.getElementById('concepto').value = 'Pago de membresía ' + nombre;
-        };
-    }
-};
 </script>
 {% endblock %}

@@ -675,6 +675,25 @@ def asistencias_registrar(request):
                 cliente.save()
                 return JsonResponse({'success': False, 'message': 'Membresía vencida'})
             
+            # ✅ VALIDACIÓN: No permitir registro antes de 20 minutos
+            ultima_asistencia = Asistencia.objects.filter(cliente=cliente).order_by('-fecha', '-hora').first()
+            
+            if ultima_asistencia:
+                # Combinar fecha y hora de la última asistencia
+                ultima_asistencia_datetime = timezone.make_aware(
+                    datetime.combine(ultima_asistencia.fecha, ultima_asistencia.hora)
+                )
+                tiempo_transcurrido = timezone.now() - ultima_asistencia_datetime
+                
+                # Verificar si han pasado menos de 20 minutos
+                if tiempo_transcurrido < timedelta(minutes=20):
+                    minutos_restantes = 20 - int(tiempo_transcurrido.total_seconds() / 60)
+                    return JsonResponse({
+                        'success': False,
+                        'message': f'⏱️ Debe esperar {minutos_restantes} minuto(s) más para registrar otra asistencia'
+                    })
+            
+            # Registrar asistencia
             asistencia = Asistencia.objects.create(
                 cliente=cliente,
                 usuario_registro=request.user
@@ -682,14 +701,14 @@ def asistencias_registrar(request):
             
             return JsonResponse({
                 'success': True,
-                'message': f'Asistencia registrada para {cliente.nombres} {cliente.apellidos}',
+                'message': f'✅ Asistencia registrada para {cliente.nombres} {cliente.apellidos}',
                 'cliente': f'{cliente.nombres} {cliente.apellidos}',
                 'hora': asistencia.hora.strftime('%H:%M:%S')
             })
         except Cliente.DoesNotExist:
-            return JsonResponse({'success': False, 'message': 'Cliente no encontrado'})
+            return JsonResponse({'success': False, 'message': '❌ Cliente no encontrado'})
         except Exception as e:
-            return JsonResponse({'success': False, 'message': f'Error: {str(e)}'})
+            return JsonResponse({'success': False, 'message': f'❌ Error: {str(e)}'})
     
     # SOLUCIÓN: Usar date.today() directamente
     fecha_hoy = date.today()

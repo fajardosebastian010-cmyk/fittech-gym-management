@@ -198,7 +198,7 @@
                 <select name="membresia" id="membresia" class="input" required>
                     <option value="">Seleccione una membresía</option>
                     {% for membresia in membresias %}
-                    <option value="{{ membresia.id }}">
+                    <option value="{{ membresia.id }}" data-precio="{{ membresia.precio }}">
                         {{ membresia.nombre }} - {{ membresia.duracion_dias }} días - ${{ membresia.precio|floatformat:0 }} COP
                     </option>
                     {% endfor %}
@@ -253,4 +253,21 @@
         </form>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Autocompletar monto según membresía seleccionada
+document.getElementById('membresia').addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    const precio = selectedOption.getAttribute('data-precio');
+    const montoInput = document.getElementById('monto');
+    
+    if (precio) {
+        montoInput.value = Math.round(parseFloat(precio));
+    } else {
+        montoInput.value = '';
+    }
+});
+</script>
 {% endblock %}
